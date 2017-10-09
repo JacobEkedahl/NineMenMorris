@@ -10,5 +10,9 @@ package modell;
  * @author Jacob
  */
 public class Piece {
+    private Position pos;
     
+    public Piece() {
+        
+    }
 }
