@@ -5,6 +5,8 @@
  */
 package Testing;
 
+import modell.*;
+
 /**
  *
  * @author Jacob
@@ -12,6 +14,21 @@ package Testing;
 public class PlayerTest {
 
     public static void main(String[] args) {
-        System.out.println("Hello");
+        Player playerOne = new Player("Player One", false);
+        Player playerTwo = new Player("Player Two", true);
+        playerOne.placePiece(0, Position.A1);
+
+        Piece p = new Piece(true, Position.A4, 5);
+
+        boolean sameTeam = playerTwo.sameTeam(p);
+        System.out.println("Does piece belong to player: " + sameTeam);
+        System.out.println("Is player black: " + playerOne.isBlack());
+        System.out.println("No of pieces: " + playerOne.getNoOfPieces());
+
+        Piece chosedPiece = playerOne.choosePiece(1); //id
+        System.out.println(chosedPiece.toString());
+
+
+        //System.out.println(playerOne.toString());
     }
 }

@@ -12,10 +12,16 @@ package modell;
 public class Piece {
     private Position pos;
     private boolean black;
+    private final int id;
     
-    public Piece(boolean black, Position pos) {
+    public Piece(boolean black, Position pos, int id) {
         this.black = black;
         this.pos = pos;
+        this.id = id;
+    }
+    
+    public int getId() {
+        return this.id;
     }
     
     public void setBlack(boolean black) {
@@ -35,24 +41,21 @@ public class Piece {
     }
     
     public boolean isPosEqual(Position otherPos) {
-        if (this.pos == otherPos) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.pos == otherPos;
+    }
+    
+    public boolean isIdEqual(int id) {
+        return this.id == id;
     }
     
     public boolean isBlackEqual(boolean otherBlack) {
-        if (this.black == otherBlack) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.black == otherBlack;
     }
     
+    @Override
     public String toString() {
         String info;
-        info = "Piece info \n" + "Is black: " + black + " Position: " + pos;
+        info = "Piece info (ID: " + this.id + "\n" + "Is black: " + black + " Position: " + pos;
         return info;
     }
 }

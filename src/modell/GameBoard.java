@@ -5,10 +5,25 @@
  */
 package modell;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Jacob
  */
 public class GameBoard {
+    private ArrayList<Piece> boardPieces;
     
+    public GameBoard() {
+        boardPieces = new ArrayList<Piece>();
+    }
+    
+    
+    public void movePiece(Piece p, Position newPos) {
+        
+    }
+    
+    public void removePiece(boolean blackPlayer, int pieceIndex) {
+        
+    }
 }
