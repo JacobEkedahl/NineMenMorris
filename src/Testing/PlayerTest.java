@@ -16,7 +16,9 @@ public class PlayerTest {
     public static void main(String[] args) {
         Player playerOne = new Player("Player One", false);
         Player playerTwo = new Player("Player Two", true);
-        playerOne.placePiece(0, Position.A1);
+        Piece boardPiece = playerOne.placePiece(0, Position.A1);
+        
+        System.out.println(boardPiece.toString() + "\n");
 
         Piece p = new Piece(true, Position.A4, 5);
 
@@ -29,6 +31,7 @@ public class PlayerTest {
         System.out.println(chosedPiece.toString());
 
 
-        //System.out.println(playerOne.toString());
+        System.out.println(playerOne.toString());
+        System.out.println(playerTwo.toString());
     }
 }

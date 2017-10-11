@@ -17,6 +17,9 @@ public class PieceTest {
     public static void main(String[] args) {
         Piece p1 = new Piece(false, Position.NOPOS, 0);
         System.out.println(p1.toString() + "\n");
+        Piece p2 = new Piece(false, Position.A1, 0);
+        boolean sameId = p1.isIdEqual(p2.getId());
+        System.out.println("Same id: " + sameId);
 
         p1.setPos(Position.A1);
         p1.setBlack(true);
@@ -28,6 +31,8 @@ public class PieceTest {
         System.out.println("Is pos equal to B4: " + isSamePos);
         isSamePos = p1.isPosEqual(noPos);
         System.out.println("Is pos equal to A1: " + isSamePos + "\n");
+        
+        
         
         boolean black = true;
         boolean isSameTeam = p1.isBlackEqual(black);

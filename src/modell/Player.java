@@ -40,15 +40,19 @@ public class Player {
      * @param newPos
      * @return
      */
-    public int placePiece(int pieceId, Position newPos) {
+    public Piece placePiece(int pieceId, Position newPos) {
+        Piece pieceForBoard;
+        
         for (int i = 0; i < pieces.size(); i++) {
             if (pieces.get(i).isIdEqual(pieceId)) {
                 pieces.get(i).setPos(newPos);
+                pieceForBoard = pieces.get(i);
                 pieces.remove(i);
-                break;
+                return pieceForBoard;
             }
         }
-        return pieceId;
+        System.out.println("Return null piece");
+        return null;
     }
 
     public boolean sameTeam(Piece p) {
@@ -70,6 +74,10 @@ public class Player {
 
     public boolean isBlack() {
         return this.black;
+    }
+    
+    public String getName() {
+        return this.name;
     }
 
     @Override

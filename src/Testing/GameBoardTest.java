@@ -5,12 +5,25 @@
  */
 package Testing;
 
+import modell.*;
+
 /**
  *
  * @author Jacob
  */
 public class GameBoardTest {
     public static void main(String[] args) {
-        System.out.println("Hello");
+        GameBoard gameBoard = new GameBoard();
+        Player playerOne = new Player("Player One", false);
+        
+        gameBoard.addPiece(playerOne.placePiece(0, Position.A1));
+        System.out.println(gameBoard.toString());
+        
+        gameBoard.movePiece(0, Position.B4);
+        System.out.println(gameBoard.toString());
+        
+        gameBoard.removePiece(0);
+        System.out.println(gameBoard.toString());
+                
     }
 }

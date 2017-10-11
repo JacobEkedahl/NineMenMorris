@@ -55,7 +55,7 @@ public class Piece {
     @Override
     public String toString() {
         String info;
-        info = "Piece info (ID: " + this.id + "\n" + "Is black: " + black + " Position: " + pos;
+        info = "Piece info (ID: " + this.id + ")\n" + "Is black: " + black + " Position: " + pos;
         return info;
     }
 }

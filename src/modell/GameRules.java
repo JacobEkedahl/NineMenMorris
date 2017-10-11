@@ -10,5 +10,7 @@ package modell;
  * @author Jacob
  */
 public class GameRules {
-    
+    public GameRules() {
+        
+    }
 }

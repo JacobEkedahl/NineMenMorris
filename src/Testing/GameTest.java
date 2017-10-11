@@ -5,6 +5,8 @@
  */
 package Testing;
 
+import modell.*;
+
 /**
  *
  * @author Jacob
@@ -12,6 +14,7 @@ package Testing;
 public class GameTest {
 
     public static void main(String[] args) {
-        System.out.println("Hello");
+        Game game = new Game(false, "Jacob", "Erik");
+        System.out.println(game.toString());
     }
 }
