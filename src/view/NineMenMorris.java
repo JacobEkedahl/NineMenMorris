@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import modell.Game;
 
 /**
  *
@@ -43,6 +44,8 @@ public class NineMenMorris extends Application {
     private ArrayList<ImageView> whitePieces;
     private ArrayList<ImageView> blackPieces;
 
+    private Game gameSession;
+
     @Override
     public void start(Stage primaryStage) {
 
@@ -55,7 +58,7 @@ public class NineMenMorris extends Application {
         //MenuItems
         MenuItem openItem = new MenuItem("Open");
         MenuItem saveItem = new MenuItem("Save");
-        MenuItem restartGameItem = new MenuItem("Restart Game"); //alert AI or player?
+        MenuItem restartGameItem = new MenuItem("New Game"); //alert AI or player?
         MenuItem regretMoveItem = new MenuItem("Regret last move"); //need a array of moves in game
         MenuItem aboutItem = new MenuItem("About");
         MenuItem rulesItem = new MenuItem("Rules");
@@ -66,6 +69,7 @@ public class NineMenMorris extends Application {
         helpMenu.getItems().addAll(aboutItem, rulesItem);
         menuBar.getMenus().addAll(fileMenu, gameMenu, helpMenu);
 
+        //Pieces and players name
         File file = new File("src/view/whiteCircle.png");
         Image imageWhite = new Image(file.toURI().toString());
         file = new File("src/view/blackCircle.png");
@@ -77,7 +81,7 @@ public class NineMenMorris extends Application {
         for (int i = 0; i < 9; i++) {
             ImageView whitePiece = new ImageView(imageWhite);
             ImageView blackPiece = new ImageView(imageBlack);
-            whitePiece.setFitHeight(50);
+            whitePiece.setFitHeight(50); //set size of pieces
             whitePiece.setFitWidth(50);
             blackPiece.setFitHeight(50);
             blackPiece.setFitWidth(50);
@@ -103,13 +107,24 @@ public class NineMenMorris extends Application {
         addPiecesToGrid(grid, blackPieces, 8);
         grid.add(playerTwoLbl, 0, 7);
 
+        Button newGamebtn = new Button("New Game");
+        Button regretLastMovebtn = new Button("Regret move");
+
+        HBox bottomBox = new HBox();
+        bottomBox.setPadding(new Insets(10, 10, 10, 10));
+        bottomBox.setPrefSize(300, 50);
+        bottomBox.getChildren().addAll(newGamebtn, regretLastMovebtn);
+
+        // FlowPane bottomPane = new FlowPane();
+        // bottomPane.getChildren().addAll(newGamebtn, regretLastMovebtn);
         //Create a game players and get their names and position..
         //mainPane.setStyle("-fx-background-color: Black");
         mainPane = new BorderPane();
         mainPane.setTop(menuBar);
         mainPane.setRight(grid);
+        mainPane.setBottom(bottomBox);
 
-        Scene scene = new Scene(mainPane, 600, 500);
+        Scene scene = new Scene(mainPane, 600, 550);
 
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
