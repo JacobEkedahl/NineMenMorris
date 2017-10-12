@@ -35,7 +35,21 @@ public class Game {
         gameBoard = new GameBoard();
     }
     
-
+    public Piece placePiece(int pieceId, Position newPos){
+        if(playerOneTurn){
+            playerOneTurn=false;
+            return this.playerOne.placePiece(pieceId, newPos);
+        }
+        else{
+            playerOneTurn=true;
+            return this.playerTwo.placePiece(pieceId, newPos);
+        }
+    }
+    
+    public void movePiece(int pieceId, Position newPos){
+        gameBoard.movePiece(pieceId, newPos);
+    }
+    
     public String toString() {
         String info = "";
         info += playerOne.toString() + "\n" + playerTwo.toString() + "\n" + gameBoard.toString();
