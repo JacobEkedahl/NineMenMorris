@@ -24,7 +24,7 @@ public class Game {
     public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
         moves = new ArrayList<>();
         playerOne = new Player(playerOneName, isPlayerOneBlack);
-        playerOneTurn = !isPlayerOneBlack;
+        playerOneTurn = !isPlayerOneBlack; //Player with white start
         playerTwo = new Player(playerTwoName, !isPlayerOneBlack);
         gameBoard = new GameBoard();
         placeStage = true;
@@ -37,6 +37,50 @@ public class Game {
         playerTwo = new Player(playerTwo.getName(), playerTwo.isBlack());
         gameBoard = new GameBoard();
         placeStage = true;
+    }
+
+    public ArrayList<Position> getFreePos() {
+        return (ArrayList<Position>) gameBoard.getEmptyPos().clone();
+    }
+
+    public ArrayList<Piece> getPlayerPieces(Player playerPieces) {
+        return playerPieces.getPieces();
+    }
+
+    public Player getPlayerOne() {
+        return playerOne;
+    }
+
+    public boolean getPlaceStage() {
+        return placeStage;
+    }
+
+    public boolean getPlayerOneTurn() {
+        return playerOneTurn;
+    }
+
+    public void placePiece(int pieceId, String newPos) {
+        if (playerOneTurn) {
+            playerOneTurn = false;
+            gameBoard.addPiece(playerOne.placePiece(pieceId, newPos));
+        } else {
+            playerOneTurn = true;
+            gameBoard.addPiece(playerTwo.placePiece(pieceId, newPos));
+        }
+    }
+
+    public void placePiece(int pieceId, Position newPos) {
+        if (playerOneTurn) {
+            playerOneTurn = false;
+            gameBoard.addPiece(playerOne.placePiece(pieceId, newPos));
+        } else {
+            playerOneTurn = true;
+            gameBoard.addPiece(playerTwo.placePiece(pieceId, newPos));
+        }
+    }
+
+    public void movePiece(int pieceId, Position newPos) {
+        gameBoard.movePiece(pieceId, newPos);
     }
 
     public String toString() {

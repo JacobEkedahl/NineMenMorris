@@ -42,7 +42,7 @@ public class Player {
      */
     public Piece placePiece(int pieceId, Position newPos) {
         Piece pieceForBoard;
-        
+
         for (int i = 0; i < pieces.size(); i++) {
             if (pieces.get(i).isIdEqual(pieceId)) {
                 pieces.get(i).setPos(newPos);
@@ -55,12 +55,25 @@ public class Player {
         return null;
     }
 
+    public Piece placePiece(int pieceId, String newPos) {
+        Position stringToPos = Position.NOPOS;
+
+        for (Position p : Position.values()) {
+            if (p.name().equals(newPos)) {
+                stringToPos = p;
+                break;
+            }
+        }
+
+        return placePiece(pieceId, stringToPos);
+    }
+
     public boolean sameTeam(Piece p) {
         return p.isBlack() == this.black;
     }
 
     public Piece choosePiece(int pieceId) {
-        for (Piece p: pieces) {
+        for (Piece p : pieces) {
             if (p.isIdEqual(pieceId)) {
                 return p;
             }
@@ -75,9 +88,13 @@ public class Player {
     public boolean isBlack() {
         return this.black;
     }
-    
+
     public String getName() {
         return this.name;
+    }
+
+    public ArrayList<Piece> getPieces() {
+        return (ArrayList<Piece>) pieces.clone();
     }
 
     @Override
