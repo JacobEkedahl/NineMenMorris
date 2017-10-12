@@ -19,12 +19,15 @@ public class Game {
     private Player playerTwo;
     private GameBoard gameBoard;
 
+    private boolean placeStage;
+
     public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
         moves = new ArrayList<>();
         playerOne = new Player(playerOneName, isPlayerOneBlack);
         playerOneTurn = !isPlayerOneBlack;
         playerTwo = new Player(playerTwoName, !isPlayerOneBlack);
         gameBoard = new GameBoard();
+        placeStage = true;
     }
 
     public void reset() {
@@ -33,8 +36,8 @@ public class Game {
         playerOneTurn = !playerOne.isBlack();
         playerTwo = new Player(playerTwo.getName(), playerTwo.isBlack());
         gameBoard = new GameBoard();
+        placeStage = true;
     }
-    
 
     public String toString() {
         String info = "";

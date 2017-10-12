@@ -30,13 +30,15 @@ public class PieceTest {
         boolean isSamePos = p1.isPosEqual(otherPos);
         System.out.println("Is pos equal to B4: " + isSamePos);
         isSamePos = p1.isPosEqual(noPos);
-        System.out.println("Is pos equal to A1: " + isSamePos + "\n");
-        
-        
+        System.out.println("Is pos equal to A1: " + isSamePos + "\n");        
         
         boolean black = true;
         boolean isSameTeam = p1.isBlackEqual(black);
         System.out.println("Is it black: " + isSameTeam);
+        
+        System.out.println("Hello!!!!"); //test
+        System.out.println("Jacob");
+        System.out.println("test");
         
         System.out.println(p1.toString());
     }
