@@ -47,8 +47,12 @@ public class Game {
         return playerPieces.getPieces();
     }
 
-    public Player getPlayerOne() {
-        return playerOne;
+    public Player getCurrentPlayer() {
+        if (playerOneTurn) {
+            return playerOne;
+        } else {
+            return playerTwo;
+        }
     }
 
     public boolean getPlaceStage() {

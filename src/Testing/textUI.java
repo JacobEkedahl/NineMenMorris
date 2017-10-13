@@ -15,57 +15,67 @@ import modell.*;
  */
 public class textUI {
 
-    private static void mainLoop() {
-        Scanner sc = new Scanner(System.in);
-        Game game = new Game(false, "Player 1", "Player 2");
+    private static Scanner sc = new Scanner(System.in);
 
-        if (game.getPlayerOneTurn()) {
-            System.out.println("It is player ones turn!");
-            if (game.getPlaceStage()) {
+    private static void playerPlacePiece(Player player, Game game) {
+        System.out.println("It is player ones turn!");
+        ArrayList<Piece> playerOnePieces = new ArrayList<>();
+        playerOnePieces = game.getCurrentPlayer().getPieces();
+        for (int i = 0; i < playerOnePieces.size(); i++) {
+            System.out.println("Piece ID: " + playerOnePieces.get(i).getId() + " Black: " + playerOnePieces.get(i).isBlack());
+        }
+        System.out.println("Player One: Please select piece (INPUT ID): ");
+        boolean validChoice = false;
 
-                ArrayList<Piece> playerOnePieces = new ArrayList<>();
-                playerOnePieces = game.getPlayerOne().getPieces();
-                for (int i = 0; i < playerOnePieces.size(); i++) {
-                    System.out.println("Piece ID: " + playerOnePieces.get(i).getId() + " Black: " + playerOnePieces.get(i).isBlack());
-                }
-                System.out.println("Player One: Please select piece (INPUT ID): ");
-                boolean validChoice = false;
+        int selectedId = sc.nextInt();
 
-                int selectedId = sc.nextInt();
-
-                for (int i = 0; i < playerOnePieces.size(); i++) {
-                    if (playerOnePieces.get(i).getId() == selectedId) {
-                        validChoice = true;
-                    }
-                }
-
-                while (validChoice == false) {
-
-                    System.out.println("Incorrect ID!");
-                    selectedId = sc.nextInt();
-
-                    for (int i = 0; i < playerOnePieces.size(); i++) {
-                        if (playerOnePieces.get(i).getId() == selectedId) {
-                            validChoice = true;
-                        }
-                    }
-                }
-
-                ArrayList<Position> freePos = game.getFreePos();
-                System.out.println("Available position: ");
-                for (int i = 0; i < freePos.size(); i++) {
-                    System.out.print(freePos.get(i).name() + " - ");
-                }
-                System.out.println("\n");
-
-                System.out.println("Please chooce available square: ");
-                String chosenPos = sc.next();
-
-                game.placePiece(selectedId, chosenPos);
-                System.out.println("Player placed piece: " + selectedId + "At pos: " + chosenPos);
+        for (int i = 0; i < playerOnePieces.size(); i++) {
+            if (playerOnePieces.get(i).getId() == selectedId) {
+                validChoice = true;
             }
-        } else {
-            System.out.println("It is player twos turn!");
+        }
+
+        while (validChoice == false) {
+
+            System.out.println("Incorrect ID!");
+            selectedId = sc.nextInt();
+
+            for (int i = 0; i < playerOnePieces.size(); i++) {
+                if (playerOnePieces.get(i).getId() == selectedId) {
+                    validChoice = true;
+                }
+            }
+        }
+
+        ArrayList<Position> freePos = game.getFreePos();
+        System.out.println("Available position: ");
+        for (int i = 0; i < freePos.size(); i++) {
+            System.out.print(freePos.get(i).name() + " - ");
+        }
+        System.out.println("\n");
+
+        System.out.println("Please chooce available square: ");
+        String chosenPos = sc.next();
+
+        game.placePiece(selectedId, chosenPos);
+        System.out.println("Player placed piece: " + selectedId + "At pos: " + chosenPos);
+
+        ArrayList<Position> freePos2 = game.getFreePos();
+        System.out.println("Available position: ");
+        for (int i = 0; i < freePos2.size(); i++) {
+            System.out.print(freePos2.get(i).name() + " - ");
+        }
+    }
+
+    private static void mainLoop() {
+
+        Game game = new Game(false, "Player 1", "Player 2");
+        while (game.getPlaceStage()) {
+            playerPlacePiece(game.getCurrentPlayer(), game);
+            //has the otherPlayer (less then 3 pieces/no possible moves)/won then notify that game is over and currentPlayer won
+            //has currentPlayer a mill then current Player gets a list of possible pieces to remove
+            //Player choose a piece to remove
+            //System removes that piece from gameBoard
         }
     }
 
