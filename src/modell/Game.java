@@ -64,27 +64,26 @@ public class Game {
     }
 
     public void placePiece(int pieceId, String newPos) {
-        if (playerOneTurn) {
-            playerOneTurn = false;
-            gameBoard.addPiece(playerOne.placePiece(pieceId, newPos));
-        } else {
-            playerOneTurn = true;
-            gameBoard.addPiece(playerTwo.placePiece(pieceId, newPos));
-        }
+        //if the OtherPlayer has less then 3 pieces then return 0 = GameOver Current Player Won
+        //if currentPlayer has no possible moves return 1 = GameOver Other player lost
+        gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
+        //if currentPlayer has a new mill then return 2 = CurrentPlayer gets to remove piece
+        //else updatePlayerTurn
+        //updatePlaceStage
+        updatePlayerTurn();
     }
 
     public void placePiece(int pieceId, Position newPos) {
-        if (playerOneTurn) {
-            playerOneTurn = false;
-            gameBoard.addPiece(playerOne.placePiece(pieceId, newPos));
-        } else {
-            playerOneTurn = true;
-            gameBoard.addPiece(playerTwo.placePiece(pieceId, newPos));
-        }
+        gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
+        updatePlayerTurn();
     }
 
     public void movePiece(int pieceId, Position newPos) {
         gameBoard.movePiece(pieceId, newPos);
+    }
+
+    private void updatePlayerTurn() {
+        playerOneTurn = !playerOneTurn;
     }
 
     public String toString() {
