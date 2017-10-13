@@ -76,13 +76,16 @@ public class textUI {
     private static void mainLoop() {
 
         Game game = new Game(false, "Player 1", "Player 2");
-        while (game.getPlaceStage()) {
-            playerPlacePiece(game.getCurrentPlayer(), game);
-            //has the otherPlayer (less then 3 pieces/no possible moves)/ then notify that game is over and currentPlayer won
-            //has currentPlayer a mill then current Player gets a list of possible pieces to remove
-            //Player choose a piece to remove
-            //System removes that piece from gameBoard
+        while (game.isGameRunning()) {
+            if (game.getPlaceStage()) {
+                playerPlacePiece(game.getCurrentPlayer(), game);
+                //has the otherPlayer (less then 3 pieces/no possible moves)/ then notify that game is over and currentPlayer won
+                //has currentPlayer a mill then current Player gets a list of possible pieces to remove
+                //Player choose a piece to remove
+                //System removes that piece from gameBoard
+            }
         }
+
     }
 
     public static void main(String[] args) {

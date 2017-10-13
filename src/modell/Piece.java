@@ -5,6 +5,8 @@
  */
 package modell;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Jacob

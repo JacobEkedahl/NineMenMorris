@@ -18,6 +18,8 @@ public class Game {
     private Player playerOne;
     private Player playerTwo;
     private GameBoard gameBoard;
+    private boolean gameRunning;
+    //private GameRules gameRules;
 
     private boolean placeStage;
 
@@ -28,6 +30,7 @@ public class Game {
         playerTwo = new Player(playerTwoName, !isPlayerOneBlack);
         gameBoard = new GameBoard();
         placeStage = true;
+        gameRunning = true;
     }
 
     public void reset() {
@@ -37,6 +40,18 @@ public class Game {
         playerTwo = new Player(playerTwo.getName(), playerTwo.isBlack());
         gameBoard = new GameBoard();
         placeStage = true;
+        gameRunning = true;
+    }
+    
+    public boolean isGameRunning() {
+        return gameRunning;
+    }
+    
+    public String gameOver() {
+        String playerName = "";
+        
+        gameRunning = false;
+        return playerName;
     }
 
     public ArrayList<Position> getFreePos() {
