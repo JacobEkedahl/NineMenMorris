@@ -181,6 +181,34 @@ public class GameRules {
         return false;
     }
 
+    public boolean haveCurrentPlayerWon(Player otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //need boardPieces update both boardPieces and freePos placeStage
+        int totalPlayerPieces = 0;
+        totalPlayerPieces += otherPlayer.getNoOfPieces();
+        System.out.println("totalPlayerPieces: " + totalPlayerPieces);
+        totalPlayerPieces += getListPiecesOfColor(otherPlayer.isBlack(), boardPieces).size();
+
+        return totalPlayerPieces < 3; //|| haveOtherNoMoves(otherPlayer, boardPieces, freePos)
+    }
+
+    private boolean haveOtherNoMoves(Player otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //only be called when placeStage is over need to test
+        int noOfChoices = 0;
+        ArrayList<Piece> piecesOnBoard = getListPiecesOfColor(otherPlayer.isBlack(), boardPieces);
+        for (Piece p: piecesOnBoard) {
+            noOfChoices += getOptionMove(freePos, p).size();
+        }
+        return noOfChoices == 0;
+    }
+
+    private ArrayList<Piece> getListPiecesOfColor(boolean black, ArrayList<Piece> boardPieces) {
+        ArrayList<Piece> piecesOfColor = new ArrayList<>();
+        for (Piece p : boardPieces) {
+            if (p.isBlackEqual(black)) {
+                piecesOfColor.add(p);
+            }
+        }
+        return piecesOfColor;
+    }
+
     private Position stringToPos(String posString) {
         return Position.valueOf(posString);
     }
