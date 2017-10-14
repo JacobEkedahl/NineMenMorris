@@ -28,6 +28,16 @@ public class GameBoard {
         }
         freePosition.remove(Position.NOPOS);
     }
+    
+    public ArrayList<Piece> getPlayerPieces(Player player) {
+        ArrayList<Piece> playerPieces = new ArrayList<Piece>();
+        for (Piece p: boardPieces) {
+            if (p.isBlackEqual(player.isBlack())) {
+                playerPieces.add(p);
+            }
+        }
+        return playerPieces;
+    }
 
     public void addPiece(Piece pieceFromPlayer) {
         updateEmptyPos(false, pieceFromPlayer.getPos());

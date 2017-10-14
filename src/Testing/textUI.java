@@ -66,11 +66,27 @@ public class textUI {
         game.placePiece(selectedId, chosenPos);
         System.out.println("Player placed piece: " + selectedId + "At pos: " + chosenPos);
 
-        ArrayList<Position> freePos2 = game.getFreePos();
-        System.out.println("Available position: ");
-        for (int i = 0; i < freePos2.size(); i++) {
-            System.out.print(freePos2.get(i).name() + " - ");
+        Piece p = new Piece(isPieceBlack(selectedId), stringToPos(chosenPos), selectedId);
+        if (game.isMill(p, game.getGameBoardPieces())) {
+            System.out.println("You have a mill, choose one of these pieces to remove:");
+            ArrayList<Piece> otherPlayPieces = game.getOtherPlayerPieces();
+            for (Piece otherPiece : otherPlayPieces) {
+                System.out.println(otherPiece.toString());
+            }
+            
+            int chosenPiece = sc.nextInt();
+            game.removePiece(chosenPiece);
         }
+
+        game.changePlayerTurn();
+    }
+
+    private static Position stringToPos(String stringPos) {
+        return Position.valueOf(stringPos);
+    }
+
+    private static boolean isPieceBlack(int id) {
+        return !(id >= 0 || id < 9);
     }
 
     private static void mainLoop() {

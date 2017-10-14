@@ -19,7 +19,7 @@ public class Game {
     private Player playerTwo;
     private GameBoard gameBoard;
     private boolean gameRunning;
-    //private GameRules gameRules;
+    private GameRules gameRules;
 
     private boolean placeStage;
 
@@ -31,6 +31,7 @@ public class Game {
         gameBoard = new GameBoard();
         placeStage = true;
         gameRunning = true;
+        gameRules = new GameRules();
     }
 
     public void reset() {
@@ -42,14 +43,14 @@ public class Game {
         placeStage = true;
         gameRunning = true;
     }
-    
+
     public boolean isGameRunning() {
         return gameRunning;
     }
-    
+
     public String gameOver() {
         String playerName = "";
-        
+
         gameRunning = false;
         return playerName;
     }
@@ -60,6 +61,10 @@ public class Game {
 
     public ArrayList<Piece> getPlayerPieces(Player playerPieces) {
         return playerPieces.getPieces();
+    }
+
+    public ArrayList<Piece> getGameBoardPieces() {
+        return gameBoard.getPieces();
     }
 
     public Player getCurrentPlayer() {
@@ -85,19 +90,38 @@ public class Game {
         //if currentPlayer has a new mill then return 2 = CurrentPlayer gets to remove piece
         //else updatePlayerTurn
         //updatePlaceStage
-        updatePlayerTurn();
+        //changePlayerTurn();
+    }
+
+    public void removePiece(int idNumber) {
+        gameBoard.removePiece(idNumber);
     }
 
     public void placePiece(int pieceId, Position newPos) {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
-        updatePlayerTurn();
+    }
+
+    public boolean isMill(Piece selectedPiece, ArrayList<Piece> gameBoardPieces) {
+        return gameRules.newMill(selectedPiece, gameBoardPieces);
+    }
+
+    private Player getOtherPlayer() {
+        if (playerOneTurn) {
+            return playerTwo;
+        } else {
+            return playerOne;
+        }
+    }
+
+    public ArrayList<Piece> getOtherPlayerPieces() {
+        return gameBoard.getPlayerPieces(getOtherPlayer());
     }
 
     public void movePiece(int pieceId, Position newPos) {
         gameBoard.movePiece(pieceId, newPos);
     }
 
-    private void updatePlayerTurn() {
+    public void changePlayerTurn() {
         playerOneTurn = !playerOneTurn;
     }
 

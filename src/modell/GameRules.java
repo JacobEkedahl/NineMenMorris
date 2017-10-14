@@ -19,40 +19,19 @@ public class GameRules {
     private final String connectedPos[];
     private ArrayList<Position> freePositions;
     private final String[] millCombinations;
-    
 
-    public GameRules(boolean placeStage, ArrayList<Piece> boardPieces) {
+    public GameRules() {
         freePositions = new ArrayList<>();
-        this.placeStage = placeStage;
-        this.boardPieces = boardPieces;
+        this.placeStage = true;
+        this.boardPieces = new ArrayList<Piece>();
         possiblePositions = new ArrayList<>();
-        String tempString[] = {"#A1", "A4", "D1",
-            "#A4", "A1", "A7", "B4",
-            "#A7", "A4", "D7",
-            "#B2", "B4", "D2",
-            "#B4", "B2", "B6",
-            "#B6", "B4", "D6",
-            "#C3", "C4", "D3",
-            "#C4", "B4", "C5", "C3",
-            "#C5", "C4", "D5",
-            "#D1", "D2", "A1", "G1",
-            "#D2", "D1", "B2", "F2", "D3",
-            "#D3", "C3", "E3", "D2",
-            "#D5", "D6", "C5", "E5",
-            "#D6", "B6", "F6", "D5", "D7",
-            "#D7", "A7", "G7", "D6",
-            "#E3", "D3", "E4",
-            "#E4", "E3", "E5", "F4",
-            "#E5", "D5", "E4",
-            "#F2", "D2", "F4",
-            "#F4", "F2", "F6", "E4", "G4",
-            "#F6", "D6", "F4",
-            "#G1", "D1", "G4",
-            "#G4", "G1", "G7", "F4",
-            "#G7", "D7", "G4"};
-        connectedPos = tempString;
+        connectedPos = initAdjPos();
+        millCombinations = initMilPos();
+    }
+
+    private String[] initMilPos() {
         String millString[] = {
-            "#A1", "A4", "A7", 
+            "#A1", "A4", "A7",
             "#A1", "D1", "G1",
             "#A4", "A1", "A7",
             "#A4", "B4", "C4",
@@ -99,11 +78,45 @@ public class GameRules {
             "#G4", "G1", "G7",
             "#G4", "F4", "E4",
             "#G7", "G1", "G4",
-            "#G7", "D7", "A7",
-        };
-        millCombinations = millString;
+            "#G7", "D7", "A7",};
+        return millString;
     }
 
+    private String[] initAdjPos() {
+        String tempString[] = {"#A1", "A4", "D1",
+            "#A4", "A1", "A7", "B4",
+            "#A7", "A4", "D7",
+            "#B2", "B4", "D2",
+            "#B4", "B2", "B6",
+            "#B6", "B4", "D6",
+            "#C3", "C4", "D3",
+            "#C4", "B4", "C5", "C3",
+            "#C5", "C4", "D5",
+            "#D1", "D2", "A1", "G1",
+            "#D2", "D1", "B2", "F2", "D3",
+            "#D3", "C3", "E3", "D2",
+            "#D5", "D6", "C5", "E5",
+            "#D6", "B6", "F6", "D5", "D7",
+            "#D7", "A7", "G7", "D6",
+            "#E3", "D3", "E4",
+            "#E4", "E3", "E5", "F4",
+            "#E5", "D5", "E4",
+            "#F2", "D2", "F4",
+            "#F4", "F2", "F6", "E4", "G4",
+            "#F6", "D6", "F4",
+            "#G1", "D1", "G4",
+            "#G4", "G1", "G7", "F4",
+            "#G7", "D7", "G4"};
+
+        return tempString;
+    }
+
+    /**
+     * Returns an list of adj position to players selected Piece
+     *
+     * @param pos
+     * @return
+     */
     public ArrayList<String> getAdjPos(String pos) {
         ArrayList<String> adjPos = new ArrayList<>();
         for (int i = 0; i < connectedPos.length; i++) {
@@ -119,6 +132,14 @@ public class GameRules {
         return (ArrayList<String>) adjPos.clone();
     }
 
+    /**
+     * Looks if there is free space on those adj Position, then return a list of
+     * those positions
+     *
+     * @param free
+     * @param selectedPiece
+     * @return
+     */
     public ArrayList<Position> getOptionMove(ArrayList<Position> free, Piece selectedPiece) {
         ArrayList<Position> freePos = new ArrayList<>();
         ArrayList<String> adjPos = getAdjPos(selectedPiece.getPos().name());
@@ -150,34 +171,48 @@ public class GameRules {
         }
         return false;
     }
-    
-    public boolean newMill(String pos){
-        ArrayList<String> mill = new ArrayList();
-        boolean movedPiece;
-        int stop = 0;
-        for (int i = 0; i < millCombinations.length; i++) {
-            if(millCombinations[i].equals("#" + pos)){
-                movedPiece = isPieceOnPos(true, Position.valueOf(pos));
-                mill.add(millCombinations[i]);
-                int j = i + 1;
-                do{
-                    if(isPieceOnPos(movedPiece, Position.valueOf(millCombinations[j])))
-                        mill.add(millCombinations[j]);      
-                    j++;
-                    if(millCombinations[i].contains("#")){
-                        if(mill.size()==2)
-                            return true;
-                        else
-                            mill.clear();
-                        stop++;
-                    }
-                }while(stop!=2);
-                
+
+    private boolean isPieceOnPos(boolean black, String pos) {
+        for (int i = 0; i < boardPieces.size(); i++) {
+            if (boardPieces.get(i).isBlack() == black && boardPieces.get(i).getPos().name().equals(pos)) {
+                return true;
             }
         }
         return false;
     }
-    /* public ArrayList<Position> moveOptionsPos(Piece selectedPiece, ArrayList<Piece> gameBoardPieces) {
-        boardPieces = gameBoardPieces; //update instad
-    }*/
+
+    private Position stringToPos(String posString) {
+        return Position.valueOf(posString);
+    }
+
+    public boolean newMill(Piece movedPiece, ArrayList<Piece> gameBoardUpdate) {
+        boardPieces = gameBoardUpdate;
+        String piecePos = posToString(movedPiece.getPos());
+        boolean pieceBlack = movedPiece.isBlack();
+
+        System.out.println("Selected piece pos" + piecePos);
+
+        ArrayList<String> millPos = new ArrayList<>();
+
+        for (int i = 0; i < millCombinations.length; i++) {
+            if (millCombinations[i].equals("#" + piecePos)) { //
+                int j = i + 1;
+                int mill = 0; //needs to be 2 in order to return true
+                do {
+                    millPos.add(millCombinations[j]);
+                    j++;
+                } while (!millCombinations[j].contains("#")); //now test if this mill is correct
+                for (int k = 0; k < millPos.size(); k++) {
+                    if (isPieceOnPos(pieceBlack, millPos.get(k))) {
+                        mill++;
+                    }
+                }
+                if (mill == 2) {
+                    return true;
+                }
+                millPos.clear(); //lets the other mill combination
+            }
+        }
+        return false;
+    }
 }
