@@ -35,9 +35,9 @@ abstract public class Player {
             pieces.add(new Piece(black, Position.NOPOS, i + idNumber));
         }
     }
-
-    abstract public Piece placePiece(int pieceId, Position newPos);
     
+    abstract public Piece placePiece();
+    abstract public Piece placePiece(int pieceId, Position newPos);
     abstract public Piece placePiece(int pieceId, String newPos);
     
     public Piece choosePiece(int pieceId){
@@ -47,6 +47,10 @@ abstract public class Player {
             }
         }
         return null; //make sure that this can be handled in from where it has been called from
+    }
+    
+    public boolean sameTeam(Piece p) {
+        return p.isBlack() == this.black;
     }
     
     public ArrayList<Piece> getPieces() {

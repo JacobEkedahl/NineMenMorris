@@ -9,17 +9,36 @@ package modell;
  *
  * @author Jacob
  */
-public class AI {
-    private String name;
-    private boolean black;
+public class AI extends Player {
+    Strategy strat;
+    
+    public AI(String name, boolean black) {
+        super(name, black);
+        //strat=new Strategy();
+    }
     
     public AI () {
-        black = true; 
-        name = "AI";
+        super("AI", true);
+    }
+
+    @Override
+    public Piece placePiece() {
+        return strat.placePiece();
     }
     
-    public AI (String name, boolean black) {
-        this.name = name;
-        this.black = black;        
+    public Position movePiece(){
+        return strat.findNextMove();
     }
+
+    @Override
+    public Piece placePiece(int pieceId, Position newPos) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Piece placePiece(int pieceId, String newPos) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+
 }

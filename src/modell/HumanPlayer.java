@@ -11,25 +11,11 @@ import java.util.ArrayList;
  *
  * @author Jacob
  */
-public class HumanPlayer {
+public class HumanPlayer extends Player {
 
-    private final ArrayList<Piece> pieces;
-    private final String name;
-    private final boolean black;
-
+    
     public HumanPlayer(String name, boolean black) {
-        this.name = name;
-        this.black = black;
-        pieces = new ArrayList<>();
-
-        int idNumber = 0;
-        if (black == true) {
-            idNumber = 9;
-        }
-
-        for (int i = 0; i < 2; i++) {
-            pieces.add(new Piece(black, Position.NOPOS, i + idNumber));
-        }
+        super(name,black);
     }
 
     /**
@@ -40,14 +26,15 @@ public class HumanPlayer {
      * @param newPos
      * @return
      */
+    @Override
     public Piece placePiece(int pieceId, Position newPos) {
         Piece pieceForBoard;
 
-        for (int i = 0; i < pieces.size(); i++) {
-            if (pieces.get(i).isIdEqual(pieceId)) {
-                pieces.get(i).setPos(newPos);
-                pieceForBoard = pieces.get(i);
-                pieces.remove(i);
+        for (int i = 0; i < super.getPieces().size(); i++) {
+            if (super.getPieces().get(i).isIdEqual(pieceId)) {
+                super.getPieces().get(i).setPos(newPos);
+                pieceForBoard = super.getPieces().get(i);
+                super.getPieces().remove(i);
                 return pieceForBoard;
             }
         }
@@ -55,6 +42,7 @@ public class HumanPlayer {
         return null;
     }
 
+    @Override
     public Piece placePiece(int pieceId, String newPos) {
         Position stringToPos = Position.NOPOS;
 
@@ -68,42 +56,9 @@ public class HumanPlayer {
         return placePiece(pieceId, stringToPos);
     }
 
-    public boolean sameTeam(Piece p) {
-        return p.isBlack() == this.black;
-    }
-
-    public Piece choosePiece(int pieceId) {
-        for (Piece p : pieces) {
-            if (p.isIdEqual(pieceId)) {
-                return p;
-            }
-        }
-        return null; //make sure that this can be handled in from where it has been called from
-    }
-
-    public int getNoOfPieces() {
-        return pieces.size();
-    }
-
-    public boolean isBlack() {
-        return this.black;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public ArrayList<Piece> getPieces() {
-        return (ArrayList<Piece>) pieces.clone();
-    }
-
     @Override
-    public String toString() {
-        String info;
-        info = "Name: " + this.name + "noOfPieces: " + pieces.size() + " isBlack: " + this.black + "\n";
-        for (int i = 0; i < pieces.size(); i++) {
-            info += pieces.get(i).toString() + "\n";
-        }
-        return info;
+    public Piece placePiece() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }
