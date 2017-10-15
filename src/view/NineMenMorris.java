@@ -58,6 +58,8 @@ public class NineMenMorris extends Application {
     private boolean isPlayerTwoPiecesClickable;
     private boolean isPositionHoverable;
 
+    private ArrayList<String> hovarablePositions;
+
     private boolean gameRunning;
     private BorderPane mainPane;
     private GridPane whitePlayerPane;
@@ -74,6 +76,17 @@ public class NineMenMorris extends Application {
     @Override
     public void start(Stage primaryStage) {
         //initiate gamevariables
+        String[] stringPos = {
+            "A7", "D7", "G7",
+            "A4", "G4",
+            "A1", "D1", "G1",
+            "B6", "D6", "F6",
+            "B4", "F4",
+            "B2", "D2", "F2",
+            "C5", "D5", "E5",
+            "C4", "E4",
+            "C3", "D3", "E4"
+        };
         gameRunning = false;
         isPositionClickable = false;
         isPlayerOnePiecesClickable = false;
@@ -129,7 +142,7 @@ public class NineMenMorris extends Application {
             for (int i = 0; i < 3; i++) { //24 is number of positions
                 if (!(i == 1 && j == 1)) {
                     ImageView positionView = new ImageView(positionImage);
-                    positionView.setId("" + positionIndex);
+                    positionView.setId("#" + positionIndex);
                     positionIndex++;
                     positionView.setFitHeight(60); //set size of pieces
                     positionView.setFitWidth(60);
@@ -187,6 +200,11 @@ public class NineMenMorris extends Application {
             }
         }
 
+        //init Position value to positionviewItems
+        for (int i = 0; i < 24; i++) {
+            positionImages.get(i).setId(positionImages.get(i).getId() + stringPos[i]);
+        }
+
         //Pieces and players name
         File file = new File("src/Images/whiteCircle.png");
         Image imageWhite = new Image(file.toURI().toString());
@@ -208,6 +226,11 @@ public class NineMenMorris extends Application {
             blackPiece.setSmooth(true);
             whitePiece.setPreserveRatio(true);
             whitePiece.setSmooth(true);
+
+            whitePiece.setId("" + i);
+            blackPiece.setId("" + (i + 9));
+            whitePiece.setOnMouseClicked(new pieceClicked());
+            blackPiece.setOnMouseClicked(new pieceClicked());
 
             whitePieces.add(whitePiece);
             blackPieces.add(blackPiece);
@@ -240,24 +263,16 @@ public class NineMenMorris extends Application {
         //mainPane.setStyle("-fx-background-color: Black");
         mainPane = new BorderPane();
         File fileBack = new File("src/Images/backgroundImage.jpg");
-
         loadBackgroundImage(mainPane, fileBack);
 
         mainPane.setTop(menuBar);
-
         mainPane.setRight(grid);
-
-        mainPane.getChildren()
-                .add(groupOfPos);
+        mainPane.getChildren().add(groupOfPos);
 
         Scene scene = new Scene(mainPane, 805, 590);
-
-        primaryStage.setTitle(
-                "Nine Men Morris!");
+        primaryStage.setTitle("Nine Men Morris!");
         primaryStage.setScene(scene);
-
-        primaryStage.setResizable(
-                false);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -284,7 +299,66 @@ public class NineMenMorris extends Application {
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
                 bSize)));
+    }
 
+    private void unMarkAllButtons() {
+        for (int i = 0; i < whitePieces.size(); i++) {
+
+        }
+    }
+
+    private void changeImageInList(ArrayList<ImageView> listOfImages, Image newImage, String id) {
+        for (int i = 0; i < listOfImages.size(); i++) {
+            if (id.equals(listOfImages.get(i).getId())) {
+                listOfImages.get(i).setImage(newImage);
+            }
+        }
+    }
+
+    private void changeAllImagesInList(ArrayList<ImageView> listOfImages, Image newImage) {
+        for (int i = 0; i < listOfImages.size(); i++) {
+            listOfImages.get(i).setImage(newImage);
+        }
+    }
+
+    private Image initImagePieceWhite() {
+        File filePiece = new File("src/Images/whiteCircle.png");
+        return new Image(filePiece.toURI().toString());
+    }
+
+    private Image initImagePieceBlack() {
+        File filePiece = new File("src/Images/blackCircle.png");
+        return new Image(filePiece.toURI().toString());
+    }
+
+    private Image initImagePieceWhiteMarked() {
+        File filePiece = new File("src/Images/whiteCircleClicked.png");
+        return new Image(filePiece.toURI().toString());
+    }
+
+    private Image initImagePieceBlackMarked() {
+        File filePiece = new File("src/Images/blackCircleClicked.png");
+        return new Image(filePiece.toURI().toString());
+    }
+
+    private class pieceClicked implements EventHandler<MouseEvent> {
+
+        @Override
+        public void handle(MouseEvent event) {
+            changeAllImagesInList(whitePieces, initImagePieceWhite()); //std image
+            changeAllImagesInList(blackPieces, initImagePieceBlack());
+
+            ImageView tempPiece = new ImageView();
+            tempPiece = (ImageView) event.getSource();
+
+            if (Integer.parseInt(tempPiece.getId()) < 9) {
+                changeImageInList(whitePieces, initImagePieceWhiteMarked(), tempPiece.getId());
+            } else {
+                changeImageInList(blackPieces, initImagePieceBlackMarked(), tempPiece.getId());
+            }
+
+            System.out.println(tempPiece.getId());
+        }
     }
 
     private class positionExit implements EventHandler<MouseEvent> {
@@ -321,7 +395,6 @@ public class NineMenMorris extends Application {
             }
             System.out.println(targetView.getId());
         }
-
     }
 
     private class newGameHandles implements EventHandler<ActionEvent> {
@@ -339,7 +412,6 @@ public class NineMenMorris extends Application {
             }
              */
         }
-
     }
 
     private class itemAboutHandles implements EventHandler<ActionEvent> {
