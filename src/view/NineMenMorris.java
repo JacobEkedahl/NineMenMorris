@@ -9,23 +9,37 @@ import java.io.File;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import modell.Game;
 
@@ -62,6 +76,15 @@ public class NineMenMorris extends Application {
         MenuItem regretMoveItem = new MenuItem("Regret last move"); //need a array of moves in game
         MenuItem aboutItem = new MenuItem("About");
         MenuItem rulesItem = new MenuItem("Rules");
+
+        //Connecting items to eventhandler
+        newGameHandles newGame = new newGameHandles();
+        restartGameItem.setOnAction(newGame);
+        
+        itemAboutHandles itemAbout = new itemAboutHandles();
+        aboutItem.setOnAction(itemAbout);
+        itemRulesHandles itemRules = new itemRulesHandles();
+        rulesItem.setOnAction(itemRules);
 
         //Connect Menu and items
         fileMenu.getItems().addAll(openItem, saveItem);
@@ -103,31 +126,25 @@ public class NineMenMorris extends Application {
         playerTwoLbl = new Label("Player 2");
 
         addPiecesToGrid(grid, whitePieces, 2);
-        grid.add(playerOneLbl, 0, 1);
-        addPiecesToGrid(grid, blackPieces, 8);
-        grid.add(playerTwoLbl, 0, 7);
-
-        Button newGamebtn = new Button("New Game");
-        Button regretLastMovebtn = new Button("Regret move");
-
-        HBox bottomBox = new HBox();
-        bottomBox.setPadding(new Insets(10, 10, 10, 10));
-        bottomBox.setPrefSize(300, 50);
-        bottomBox.getChildren().addAll(newGamebtn, regretLastMovebtn);
+        grid.add(playerOneLbl, 0, 1, 4, 1); //spans over hole row
+        addPiecesToGrid(grid, blackPieces, 18);
+        grid.add(playerTwoLbl, 0, 17, 4, 1);
 
         // FlowPane bottomPane = new FlowPane();
         // bottomPane.getChildren().addAll(newGamebtn, regretLastMovebtn);
         //Create a game players and get their names and position..
         //mainPane.setStyle("-fx-background-color: Black");
         mainPane = new BorderPane();
+        File fileBack = new File("src/view/backgroundImage.jpg");
+        loadBackgroundImage(mainPane, fileBack);
         mainPane.setTop(menuBar);
         mainPane.setRight(grid);
-        mainPane.setBottom(bottomBox);
 
-        Scene scene = new Scene(mainPane, 600, 550);
+        Scene scene = new Scene(mainPane, 805, 590);
 
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Nine Men Morris!");
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -140,6 +157,104 @@ public class NineMenMorris extends Application {
                 noOfPieces++;
             }
         }
+    }
+
+    private void loadBackgroundImage(Pane pane, File file) {
+        Image backImage = new Image(file.toURI().toString());
+        BackgroundSize bSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
+
+        pane.setBackground(new Background(new BackgroundImage(backImage, BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                bSize)));
+    }
+    
+    private class newGameHandles implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            
+            //start gamethread
+           /* while (true) {
+                System.out.println("gameloop");
+            }
+            */
+        }
+        
+    }
+
+    private class itemAboutHandles implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            BorderPane backGroundPane = new BorderPane();
+
+            //Button btn = new Button("Hello");
+            //backGroundPane.getChildren().add(btn);
+            File fileBack = new File("src/view/backgroundAbout.jpg");
+            loadBackgroundImage(backGroundPane, fileBack);
+
+            Text text = new Text("This game was created by Jacob Ekedahl and Tobias Degnell.");
+
+            text.setFill(Color.WHITE);
+            text.setFont(Font.font(null, FontWeight.BOLD, 25));
+
+            backGroundPane.setCenter(text);
+            Text copyright = new Text("©JacobsCode, 2017");
+            copyright.setFill(Color.WHITE);
+            backGroundPane.setBottom(copyright);
+            newWindow(backGroundPane);
+        }
+    }
+
+    private class itemRulesHandles implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            BorderPane backGroundPane = new BorderPane();
+
+            //Button btn = new Button("Hello");
+            //backGroundPane.getChildren().add(btn);
+            File fileBack = new File("src/view/backgroundAbout.jpg");
+            loadBackgroundImage(backGroundPane, fileBack);
+
+            Text text = new Text("Nine Men's Morris is a very old game that has been played for thousands of years all over the world. It was most \n"
+                    + "popular about five hundred years ago and was played by Monks in churches \n"
+                    + "as well as on village greens throughout England.\n"
+                    + "The game is for two players. One player has nine black playing pieces, the other has nine white playing pieces. \n"
+                    + "The first player to reduce their opponent to two pieces wins.\n"
+                    + "In the first stage of the game players take turns \n"
+                    + "placing their pieces on the board, attempting to make a line of three. \n"
+                    + "Once all the pieces have been placed, players may slide them, still attempting to make a line of three. \n"
+                    + "Whenever a player makes a line of three, they remove an opponent's piece of his choice. \n "
+                    + "When one player has only three pieces left, he is allowed to move any piece from any point on the board \n"
+                    + "to any other point in order to more effectively block the winning opponent and to make a line of three. \n"
+                    + "As soon as one player is left with only two pieces or cant move a piece at all, his opponent wins.");
+
+            text.setFill(Color.WHITE);
+            text.setFont(Font.font(null, FontWeight.BOLD, 15));
+
+            backGroundPane.setTop(text);
+            Text copyright = new Text("©JacobsCode, 2017");
+            copyright.setFill(Color.WHITE);
+            backGroundPane.setBottom(copyright);
+            newWindow(backGroundPane);
+        }
+    }
+
+    private void newWindow(Pane pane) {
+        Stage stage = new Stage();
+        stage.setScene(new Scene(pane, 805, 590));
+        stage.setResizable(false);
+        stage.setTitle("About");
+        stage.show();
+    }
+
+    private void showText(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("About");
+        alert.setContentText(message);
+        alert.show();
     }
 
     /**

@@ -27,7 +27,7 @@ public class Player {
             idNumber = 9;
         }
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 2; i++) {
             pieces.add(new Piece(black, Position.NOPOS, i + idNumber));
         }
     }

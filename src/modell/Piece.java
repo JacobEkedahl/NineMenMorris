@@ -16,6 +16,10 @@ public class Piece {
     private boolean black;
     private final int id;
     
+    public Piece() {
+        this(false, Position.NOPOS, 0);
+    }
+    
     public Piece(boolean black, Position pos, int id) {
         this.black = black;
         this.pos = pos;

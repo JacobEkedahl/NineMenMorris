@@ -48,19 +48,23 @@ public class Game {
         return gameRunning;
     }
 
-    public String gameOver() {
-        String playerName = "";
-
+    public void gameOver() {
         gameRunning = false;
-        return playerName;
     }
 
     public ArrayList<Position> getFreePos() {
         return (ArrayList<Position>) gameBoard.getEmptyPos().clone();
     }
 
+    public ArrayList<Position> getOption(Piece selectedPiece) {
+        return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece);
+    }
     public ArrayList<Piece> getPlayerPieces(Player playerPieces) {
         return playerPieces.getPieces();
+    }
+    
+    public ArrayList<Piece> getPlayerPiecesFromBoard(Player player) {
+        return gameBoard.getPlayerPieces(player);
     }
 
     public ArrayList<Piece> getGameBoardPieces() {
@@ -89,12 +93,24 @@ public class Game {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
         //if currentPlayer has a new mill then return 2 = CurrentPlayer gets to remove piece
         //else updatePlayerTurn
-        //updatePlaceStage
+        updatePlaceStage();
         //changePlayerTurn();
+    }
+    
+    private void updatePlaceStage() {
+        if (playerOne.getNoOfPieces() + playerTwo.getNoOfPieces() == 0)
+            placeStage = false;
+        else {
+            placeStage = true;
+        }
     }
 
     public void removePiece(int idNumber) {
         gameBoard.removePiece(idNumber);
+    }
+
+    public boolean haveCurrentPlayerWon(Player otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) {
+        return gameRules.haveCurrentPlayerWon(getOtherPlayer(), gameBoard.getPieces(), gameBoard.getEmptyPos());
     }
 
     public void placePiece(int pieceId, Position newPos) {
@@ -105,7 +121,7 @@ public class Game {
         return gameRules.newMill(selectedPiece, gameBoardPieces);
     }
 
-    private Player getOtherPlayer() {
+    public Player getOtherPlayer() {
         if (playerOneTurn) {
             return playerTwo;
         } else {
