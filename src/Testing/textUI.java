@@ -19,7 +19,7 @@ public class textUI {
 
     private static void playerPlacePiece(Game game) {
         String colorPlayer = "";
-        Player player = game.getCurrentPlayer();
+        HumanPlayer player = game.getCurrentPlayer();
         if (player.isBlack()) {
             colorPlayer = "Black";
         } else {
@@ -83,7 +83,7 @@ public class textUI {
     }
 
     private static void playerMovePiece(Game game) {
-        Player player = game.getCurrentPlayer();
+        HumanPlayer player = game.getCurrentPlayer();
         System.out.println("Move piece!!");
         String colorPlayer = "";
         if (player.isBlack()) {
@@ -172,7 +172,7 @@ public class textUI {
             if (game.getPlaceStage()) {
                 playerPlacePiece(game);
                 //has the otherPlayer (less then 3 pieces/no possible moves)/ then notify that game is over and currentPlayer won
-                //has currentPlayer a mill then current Player gets a list of possible pieces to remove
+                //has currentPlayer a mill then current HumanPlayer gets a list of possible pieces to remove
                 //Player choose a piece to remove
                 //System removes that piece from gameBoard
             } else {

@@ -11,13 +11,13 @@ import java.util.ArrayList;
  *
  * @author Jacob
  */
-public class Player {
+public class HumanPlayer {
 
     private final ArrayList<Piece> pieces;
     private final String name;
     private final boolean black;
 
-    public Player(String name, boolean black) {
+    public HumanPlayer(String name, boolean black) {
         this.name = name;
         this.black = black;
         pieces = new ArrayList<>();

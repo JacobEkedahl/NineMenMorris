@@ -14,7 +14,7 @@ import modell.*;
 public class GameBoardTest {
     public static void main(String[] args) {
         GameBoard gameBoard = new GameBoard();
-        Player playerOne = new Player("Player One", false);
+        HumanPlayer playerOne = new HumanPlayer("Player One", false);
         
         gameBoard.addPiece(playerOne.placePiece(0, Position.A1));
         System.out.println(gameBoard.toString());

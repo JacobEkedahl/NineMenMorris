@@ -19,7 +19,11 @@ public class GameBoard {
 
     private ArrayList<Piece> boardPieces;
     private ArrayList<Position> freePosition;
-
+    
+    /**
+     * Constructor that's Initializing the boards pieces,
+     * and the free positions on the board.
+     */
     public GameBoard() {
         boardPieces = new ArrayList<>();
         freePosition = new ArrayList<Position>();
@@ -29,7 +33,13 @@ public class GameBoard {
         freePosition.remove(Position.NOPOS);
     }
     
-    public ArrayList<Piece> getPlayerPieces(Player player) {
+    /**
+     * Takes a player as parameter and returns all the pieces that player
+     * has placed on the board
+     * @param player
+     * @return current pieces on board
+     */
+    public ArrayList<Piece> getPlayerPieces(HumanPlayer player) {
         ArrayList<Piece> playerPieces = new ArrayList<Piece>();
         for (Piece p: boardPieces) {
             if (p.isBlackEqual(player.isBlack())) {
@@ -39,16 +49,29 @@ public class GameBoard {
         return playerPieces;
     }
 
+    /**
+     * Takes a piece from the player and adds it to the game board.
+     * @param pieceFromPlayer 
+     */
     public void addPiece(Piece pieceFromPlayer) {
         updateEmptyPos(false, pieceFromPlayer.getPos());
         boardPieces.add(pieceFromPlayer);
     }
 
+    /**
+     * Removes chosen piece after its id number
+     * @param idNumber 
+     */
     public void removePiece(int idNumber) { //needs to be handle if idNumber is incorrect
         updateEmptyPos(true, getPieceInList(idNumber).getPos());
         boardPieces.remove(getPieceInList(idNumber));
     }
 
+    /**
+     * Moves a piece to selected new position
+     * @param pieceId id for piece to to move
+     * @param newPos new position for selected piece
+     */
     public void movePiece(int pieceId, Position newPos) {
         for (int i = 0; i < boardPieces.size(); i++) {
             if (boardPieces.get(i).isIdEqual(pieceId)) {
@@ -60,14 +83,27 @@ public class GameBoard {
         }
     }
 
+    /**
+     * 
+     * @return a clone of all pieces on the board
+     */
     public ArrayList<Piece> getPieces() {
         return (ArrayList<Piece>) boardPieces.clone();
     }
 
-    public ArrayList<Position> getEmptyPos() {
-        return freePosition;
+    /**
+     * 
+     * @return a clone of all free positions on the board
+     */
+    public ArrayList<Position> getEmptyPos() { 
+        return (ArrayList<Position>) freePosition.clone();
     }
 
+    /**
+     * Goes through all the pieces to find the piece with selected id number
+     * @param idNumber
+     * @return null if the piece is not on board else it returns the piece
+     */
     private Piece getPieceInList(int idNumber) {
         for (Piece p : boardPieces) {
             if (p.isIdEqual(idNumber)) {
@@ -77,6 +113,11 @@ public class GameBoard {
         return null; //needs to handle this
     }
 
+    /**
+     * Adds or remove position from the list of free positions
+     * @param add true for add false for remove
+     * @param pos 
+     */
     private void updateEmptyPos(boolean add, Position pos) {
         if (add) {
             freePosition.add(pos);
@@ -85,6 +126,11 @@ public class GameBoard {
         }
     }
 
+    /**
+     * 
+     * @return how many pieces are on the board, and the info from pieces in
+     * form of string, it also returns all free positions
+     */
     @Override
     public String toString() {
         String info = "Number of pieces: " + boardPieces.size() + "\n";
