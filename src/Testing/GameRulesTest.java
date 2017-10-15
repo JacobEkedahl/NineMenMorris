@@ -18,8 +18,8 @@ public class GameRulesTest {
         GameBoard gameBoard = new GameBoard();
         GameRules gameRules = new GameRules();
 
-        Player playerOne = new Player("Player one", false);
-        Player playerTwo = new Player("Player two", true);
+        HumanPlayer playerOne = new HumanPlayer("Player one", false);
+        HumanPlayer playerTwo = new HumanPlayer("Player two", true);
 
         for (int i = 10; i < 17; i++) {
             playerTwo.placePiece(i, Position.A1);

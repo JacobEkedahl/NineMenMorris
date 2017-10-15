@@ -14,8 +14,8 @@ import modell.*;
 public class PlayerTest {
 
     public static void main(String[] args) {
-        Player playerOne = new Player("Player One", false);
-        Player playerTwo = new Player("Player Two", true);
+        HumanPlayer playerOne = new HumanPlayer("Player One", false);
+        HumanPlayer playerTwo = new HumanPlayer("Player Two", true);
         Piece boardPiece = playerOne.placePiece(0, Position.A1);
         
         System.out.println(boardPiece.toString() + "\n");

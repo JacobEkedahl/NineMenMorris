@@ -15,8 +15,8 @@ public class Game {
 
     private ArrayList<Piece> moves;
     private boolean playerOneTurn;
-    private Player playerOne;
-    private Player playerTwo;
+    private HumanPlayer playerOne;
+    private HumanPlayer playerTwo;
     private GameBoard gameBoard;
     private boolean gameRunning;
     private GameRules gameRules;
@@ -25,9 +25,9 @@ public class Game {
 
     public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
         moves = new ArrayList<>();
-        playerOne = new Player(playerOneName, isPlayerOneBlack);
+        playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
         playerOneTurn = !isPlayerOneBlack; //Player with white start
-        playerTwo = new Player(playerTwoName, !isPlayerOneBlack);
+        playerTwo = new HumanPlayer(playerTwoName, !isPlayerOneBlack);
         gameBoard = new GameBoard();
         placeStage = true;
         gameRunning = true;
@@ -36,9 +36,9 @@ public class Game {
 
     public void reset() {
         moves = new ArrayList<>();
-        playerOne = new Player(playerOne.getName(), playerOne.isBlack());
+        playerOne = new HumanPlayer(playerOne.getName(), playerOne.isBlack());
         playerOneTurn = !playerOne.isBlack();
-        playerTwo = new Player(playerTwo.getName(), playerTwo.isBlack());
+        playerTwo = new HumanPlayer(playerTwo.getName(), playerTwo.isBlack());
         gameBoard = new GameBoard();
         placeStage = true;
         gameRunning = true;
@@ -59,11 +59,11 @@ public class Game {
     public ArrayList<Position> getOption(Piece selectedPiece) {
         return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece);
     }
-    public ArrayList<Piece> getPlayerPieces(Player playerPieces) {
+    public ArrayList<Piece> getPlayerPieces(HumanPlayer playerPieces) {
         return playerPieces.getPieces();
     }
     
-    public ArrayList<Piece> getPlayerPiecesFromBoard(Player player) {
+    public ArrayList<Piece> getPlayerPiecesFromBoard(HumanPlayer player) {
         return gameBoard.getPlayerPieces(player);
     }
 
@@ -71,7 +71,7 @@ public class Game {
         return gameBoard.getPieces();
     }
 
-    public Player getCurrentPlayer() {
+    public HumanPlayer getCurrentPlayer() {
         if (playerOneTurn) {
             return playerOne;
         } else {
@@ -88,7 +88,7 @@ public class Game {
     }
 
     public void placePiece(int pieceId, String newPos) {
-        //if the OtherPlayer has less then 3 pieces then return 0 = GameOver Current Player Won
+        //if the OtherPlayer has less then 3 pieces then return 0 = GameOver Current HumanPlayer Won
         //if currentPlayer has no possible moves return 1 = GameOver Other player lost
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
         //if currentPlayer has a new mill then return 2 = CurrentPlayer gets to remove piece
@@ -109,7 +109,7 @@ public class Game {
         gameBoard.removePiece(idNumber);
     }
 
-    public boolean haveCurrentPlayerWon(Player otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) {
+    public boolean haveCurrentPlayerWon(HumanPlayer otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) {
         return gameRules.haveCurrentPlayerWon(getOtherPlayer(), gameBoard.getPieces(), gameBoard.getEmptyPos());
     }
 
@@ -121,7 +121,7 @@ public class Game {
         return gameRules.newMill(selectedPiece, gameBoardPieces);
     }
 
-    public Player getOtherPlayer() {
+    public HumanPlayer getOtherPlayer() {
         if (playerOneTurn) {
             return playerTwo;
         } else {

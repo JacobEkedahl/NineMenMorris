@@ -20,6 +20,9 @@ public class GameRules {
     private ArrayList<Position> freePositions;
     private final String[] millCombinations;
 
+    /**
+     * Constructor initializes all data members.
+     */
     public GameRules() {
         freePositions = new ArrayList<>();
         this.placeStage = true;
@@ -112,7 +115,7 @@ public class GameRules {
     }
 
     /**
-     * Returns an list of adj position to players selected Piece
+     * Returns an list of adjacent position to players selected Piece
      *
      * @param pos
      * @return
@@ -153,14 +156,31 @@ public class GameRules {
         return freePos;
     }
 
+    /**
+     * Takes a object Position and returns it in form of string
+     * @param pos
+     * @return 
+     */
     private String posToString(Position pos) {
         return pos.name();
     }
 
+    /**
+     * 
+     * @param index
+     * @return One string with adjacent positions to the one indexed in the 
+     * parameter
+     */
     public String getPos(int index) {
         return connectedPos[index];
     }
 
+    /**
+     * Checks if a piece is currently placed on board
+     * @param black
+     * @param pos
+     * @return 
+     */
     private boolean isPieceOnPos(boolean black, Position pos) {
         for (int i = 0; i < boardPieces.size(); i++) {
             if (boardPieces.get(i).isBlack() == black && boardPieces.get(i).getPos() == pos) {
@@ -172,6 +192,13 @@ public class GameRules {
         return false;
     }
 
+    /**
+     * Checks it a piece is places on a certain position and if its of a 
+     * specific color
+     * @param black
+     * @param pos
+     * @return true if there is a piece with the specified information
+     */
     private boolean isPieceOnPos(boolean black, String pos) {
         for (int i = 0; i < boardPieces.size(); i++) {
             if (boardPieces.get(i).isBlack() == black && boardPieces.get(i).getPos().name().equals(pos)) {
@@ -181,7 +208,14 @@ public class GameRules {
         return false;
     }
 
-    public boolean haveCurrentPlayerWon(Player otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //need boardPieces update both boardPieces and freePos placeStage
+    /**
+     * Checks if the current player has won or not
+     * @param otherPlayer
+     * @param boardPieces
+     * @param freePos
+     * @return true if current player has won
+     */
+    public boolean haveCurrentPlayerWon(HumanPlayer otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //need boardPieces update both boardPieces and freePos placeStage
         int totalPlayerPieces = 0;
         totalPlayerPieces += otherPlayer.getNoOfPieces();
         System.out.println("totalPlayerPieces: " + totalPlayerPieces);
@@ -190,7 +224,14 @@ public class GameRules {
         return totalPlayerPieces < 3; //|| haveOtherNoMoves(otherPlayer, boardPieces, freePos)
     }
 
-    private boolean haveOtherNoMoves(Player otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //only be called when placeStage is over need to test
+    /**
+     * Checks if the other player can make any new moves
+     * @param otherPlayer
+     * @param boardPieces
+     * @param freePos
+     * @return returns true if otherPlayer can still make a move
+     */
+    private boolean haveOtherNoMoves(HumanPlayer otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //only be called when placeStage is over need to test
         int noOfChoices = 0;
         ArrayList<Piece> piecesOnBoard = getListPiecesOfColor(otherPlayer.isBlack(), boardPieces);
         for (Piece p: piecesOnBoard) {
@@ -199,6 +240,12 @@ public class GameRules {
         return noOfChoices == 0;
     }
 
+    /**
+     * 
+     * @param black
+     * @param boardPieces
+     * @return all pieces of a specified boolean color
+     */
     private ArrayList<Piece> getListPiecesOfColor(boolean black, ArrayList<Piece> boardPieces) {
         ArrayList<Piece> piecesOfColor = new ArrayList<>();
         for (Piece p : boardPieces) {
@@ -209,10 +256,21 @@ public class GameRules {
         return piecesOfColor;
     }
 
+    /**
+     * 
+     * @param posString
+     * @return Enumeration version of posString
+     */
     private Position stringToPos(String posString) {
         return Position.valueOf(posString);
     }
 
+    /**
+     * Checks if a new mill has been formed
+     * @param movedPiece recently moved piece
+     * @param gameBoardUpdate updated version of gameBoard
+     * @return true if a new mill has been formed
+     */
     public boolean newMill(Piece movedPiece, ArrayList<Piece> gameBoardUpdate) {
         boardPieces = gameBoardUpdate;
         String piecePos = posToString(movedPiece.getPos());
