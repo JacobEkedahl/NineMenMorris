@@ -21,6 +21,7 @@ public class Game {
     private boolean gameRunning;
     private GameRules gameRules;
     private boolean placeStage;
+    private HighScore highScore;
 
     private Piece selectedPiece;
     private Position selectedPos;
@@ -44,6 +45,7 @@ public class Game {
         selectedPiece = new Piece();
         selectedPos = Position.NOPOS;
         gameState = new GameState();
+        highScore = new HighScore();
     }
 
     /**
@@ -94,6 +96,10 @@ public class Game {
 
     public void over() {
         gameState.over();
+    }
+    
+    public String getHighScoreTopTen(){
+        return highScore.getTopTen().toString();
     }
 
     private Piece getPieceInList(int idNumber) {
@@ -293,6 +299,10 @@ public class Game {
         return p;
     }
     
+    /**
+     * 
+     * @return pieces possible to remove
+     */
     public ArrayList<String> piecesToRemove() {
         return gameRules.piecesAbleToRemove(gameBoard.getPieces(), getOtherPlayerPieces());
     }
@@ -315,6 +325,11 @@ public class Game {
         gameBoard.movePiece(pieceId, newPos);
     }
 
+    /**
+     * moves selected piece to selected new position
+     * @param pieceId
+     * @param newPos 
+     */
     public void movePiece(int pieceId, String newPos) {
         gameBoard.movePiece(pieceId, Position.valueOf(newPos));
     }
