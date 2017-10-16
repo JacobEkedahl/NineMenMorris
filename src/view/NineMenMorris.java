@@ -33,6 +33,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -59,6 +60,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import modell.Game;
+import modell.HighScore;
 import modell.Position;
 
 /**
@@ -398,9 +400,11 @@ public class NineMenMorris extends Application {
     private class Controller {
 
         private Game sharedGame;
+        private HighScore highScore;
 
         Controller(Game game) {
             sharedGame = game;
+            highScore = new HighScore();
         }
 
         public void showHighscore() {
@@ -409,14 +413,11 @@ public class NineMenMorris extends Application {
             BorderPane backGroundPane = new BorderPane();
 
             File fileBack = new File("src/Images/backgroundAbout.jpg");
+            TextArea text = new TextArea(highScore.toString());
+            text.setPrefHeight(300);
+            text.setPrefWidth(300);
             loadBackgroundImage(backGroundPane, fileBack);
-            TextField text = new TextField("ff");
 
-            /*doesnt work
-            if (!gameSession.getHighScoreTopTen().equals(null)) {
-                text.setText(gameSession.getHighScoreTopTen());
-            }
-             */
             text.setEditable(false);
 
             text.setFont(Font.font(null, FontWeight.BOLD, 25));
@@ -426,6 +427,14 @@ public class NineMenMorris extends Application {
             copyright.setFill(Color.WHITE);
             backGroundPane.setBottom(copyright);
             newWindow(backGroundPane, "Highscore", 805, 590);
+        }
+
+        public String getHighScoreTopTen() {
+            return highScore.toString();
+        }
+
+        public void addToHighScore(String playerName) {
+            highScore.addToHighScore(playerName);
         }
 
         public void positionExit(Event event) {

@@ -21,7 +21,7 @@ public class Game {
     private boolean gameRunning;
     private GameRules gameRules;
     private boolean placeStage;
-    private HighScore highScore;
+    
 
     private Piece selectedPiece;
     private Position selectedPos;
@@ -47,7 +47,7 @@ public class Game {
         selectedPiece = new Piece();
         selectedPos = Position.NOPOS;
         gameState = new GameState();
-        highScore = new HighScore();
+        
     }
 
     /**
@@ -100,9 +100,7 @@ public class Game {
         gameState.over();
     }
     
-    public String getHighScoreTopTen(){
-        return highScore.getTopTen().toString();
-    }
+    
 
     private Piece getPieceInList(int idNumber) {
         ArrayList<Piece> boardPieces = gameBoard.getPieces();

@@ -28,11 +28,7 @@ public class HighScore {
     public HighScore() {
         fileName = new String(System.getProperty("user.dir") + "highScore.ser");
         winners = new ArrayList();
-        try {
-            this.readFromFile();
-        } catch (IOException ex) {
-            Logger.getLogger(HighScore.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        readFromFile();
     }
 
     public void addToHighScore(String winner) {
@@ -74,12 +70,12 @@ public class HighScore {
                     out.close();
                 }
             } catch (Exception e) {
-
+                System.out.println("file could not write");
             }
         }
     }
 
-    public void readFromFile() throws IOException {
+    public void readFromFile() {
         ObjectInputStream in = null;
         
         System.out.println("read from file " + fileName);
@@ -114,11 +110,12 @@ public class HighScore {
         return topTen;
     }
     
+    @Override
     public String toString(){
         String info=new String();
         ArrayList<Winner> topTen = getTopTen();
         for(int i=0;i<topTen.size();i++){
-            info+=topTen.get(i).toString()+"\n";
+            info+=topTen.get(i).toString()+" \n";
         }
         return info;
     }
