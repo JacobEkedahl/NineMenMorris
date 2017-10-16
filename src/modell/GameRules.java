@@ -6,12 +6,14 @@
 package modell;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
  * @author Jacob
  */
-public class GameRules {
+public class GameRules implements Observer {
 
     private boolean placeStage;
     private ArrayList<Piece> boardPieces;
@@ -143,7 +145,7 @@ public class GameRules {
      * @param selectedPiece
      * @return
      */
-    public ArrayList<String> getOptionMove(ArrayList<Position> free, Piece selectedPiece, ArrayList<Piece> boardPieces, Player currentPlayer) {
+    public ArrayList<String> getOptionMove(ArrayList<Position> free, Piece selectedPiece, Player currentPlayer) {
         ArrayList<String> freePos = new ArrayList<>();
         int noOfPieces = 0;
 
@@ -211,7 +213,7 @@ public class GameRules {
         return false;
     }
 
-    public ArrayList<String> piecesAbleToRemove(ArrayList<Piece> boardPieces, ArrayList<Piece> playerPiece) {
+    public ArrayList<String> piecesAbleToRemove(ArrayList<Piece> playerPiece) {
         ArrayList<String> piecesToRemove = new ArrayList<String>();
         for (Piece p : boardPieces) {
             if (p.isBlack() == playerPiece.get(0).isBlack()) {
@@ -246,7 +248,7 @@ public class GameRules {
      * @param freePos
      * @return true if current player has won
      */
-    public boolean haveCurrentPlayerWon(Player otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //need boardPieces update both boardPieces and freePos placeStage
+    public boolean haveCurrentPlayerWon(HumanPlayer otherPlayer, ArrayList<Position> freePos) { //need boardPieces update both boardPieces and freePos placeStage
         int totalPlayerPieces = 0;
         for (Piece p : boardPieces) {
             if (p.isBlackEqual(otherPlayer.isBlack())) {
@@ -255,7 +257,7 @@ public class GameRules {
         }
         System.out.println(totalPlayerPieces);
 
-        return totalPlayerPieces < 3 || haveOtherNoMoves(otherPlayer, boardPieces, freePos);
+        return totalPlayerPieces < 3 || haveOtherNoMoves(otherPlayer, freePos);
     }
 
     /**
@@ -266,11 +268,11 @@ public class GameRules {
      * @param freePos
      * @return returns true if otherPlayer can still make a move
      */
-    private boolean haveOtherNoMoves(Player otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //only be called when placeStage is over need to test
+    private boolean haveOtherNoMoves(HumanPlayer otherPlayer, ArrayList<Position> freePos) { //only be called when placeStage is over need to test
         int noOfChoices = 0;
         ArrayList<Piece> piecesOnBoard = getListPiecesOfColor(otherPlayer.isBlack(), boardPieces);
         for (Piece p : piecesOnBoard) {
-            noOfChoices += getOptionMove(freePos, p, boardPieces, otherPlayer).size();
+            noOfChoices += getOptionMove(freePos, p,  otherPlayer).size();
         }
         return noOfChoices == 0; //if otherPlayer have no options return true
     }
@@ -333,5 +335,13 @@ public class GameRules {
             }
         }
         return false;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        System.out.println(boardPieces  + " called with: " + arg);
+        if(!boardPieces .equals(arg)){
+            boardPieces = (ArrayList<Piece>) arg; 
+        }
     }
 }

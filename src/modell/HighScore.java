@@ -7,6 +7,7 @@ package modell;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -53,11 +54,15 @@ public class HighScore {
         return 0;
     }
 
-    public void writeToFile() throws IOException {
+    public void writeToFile() {
         ObjectOutputStream out = null;
         File file = new File(fileName);
         if (!file.exists()) {
-            file.createNewFile();
+            try {
+                if(file.createNewFile());
+            } catch (IOException ex) {
+                System.out.println("failed to create file");
+            }
         } else {
             System.out.println("Hello");
         }
@@ -66,6 +71,10 @@ public class HighScore {
         try {
             out = new ObjectOutputStream(new FileOutputStream(fileName));
             out.writeObject(winners);
+        } catch (FileNotFoundException ex) {
+            System.out.println("failed to create file");
+        } catch (IOException ex) {
+            System.out.println("failed to write to file");
         } finally {
             try {
                 if (out != null) {

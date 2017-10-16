@@ -6,12 +6,13 @@
 package modell;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 /**
  *
  * @author Jacob
  */
-public class Game {
+public class Game extends Observable {
 
     private ArrayList<Piece> moves;
     private boolean playerOneTurn;
@@ -59,7 +60,6 @@ public class Game {
         selectedPiece = new Piece();
         selectedPos = Position.NOPOS;
         gameState = new GameState();
-
     }
     
     public boolean againstAI() {
@@ -168,7 +168,7 @@ public class Game {
         if (placeStage == true) {
             return (ArrayList<String>) gameBoard.getEmptyPosString().clone();
         } else {
-            return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece, gameBoard.getPieces(), getCurrentPlayer());
+            return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece, getCurrentPlayer());
         }
     }
 
@@ -248,6 +248,8 @@ public class Game {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
         counter--;
         updatePlaceStage();
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     /**
@@ -270,6 +272,8 @@ public class Game {
      */
     public void removePiece(int idNumber) {
         gameBoard.removePiece(idNumber);
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     public boolean isPieceOnBoard(int idNumber) {
@@ -301,7 +305,7 @@ public class Game {
      * @return true if current player has won
      */
     public boolean haveCurrentPlayerWon() {
-        return gameRules.haveCurrentPlayerWon(getOtherPlayer(), gameBoard.getPieces(), gameBoard.getEmptyPos());
+        return gameRules.haveCurrentPlayerWon((HumanPlayer) getOtherPlayer(), gameBoard.getEmptyPos());
     }
 
     /**
@@ -313,6 +317,8 @@ public class Game {
      */
     public void placePiece(int pieceId, Position newPos) {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     /**
@@ -348,7 +354,7 @@ public class Game {
      * @return pieces possible to remove
      */
     public ArrayList<String> piecesToRemove() {
-        return gameRules.piecesAbleToRemove(gameBoard.getPieces(), getOtherPlayerPieces());
+        return gameRules.piecesAbleToRemove(getOtherPlayerPieces());
     }
 
     /**
@@ -367,6 +373,8 @@ public class Game {
      */
     public void movePiece(int pieceId, Position newPos) {
         gameBoard.movePiece(pieceId, newPos);
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     /**
@@ -377,6 +385,8 @@ public class Game {
      */
     public void movePiece(int pieceId, String newPos) {
         gameBoard.movePiece(pieceId, Position.valueOf(newPos));
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     /**

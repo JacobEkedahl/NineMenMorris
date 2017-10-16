@@ -25,7 +25,7 @@ public class GameRulesTest {
             playerTwo.placePiece(i, Position.A1);
         }
 
-        if (gameRules.haveCurrentPlayerWon(playerTwo, gameBoard.getPieces(), gameBoard.getEmptyPos())) //   gameBoard.addPiece(playerOne.placePiece(0, Position.A1));
+        if (gameRules.haveCurrentPlayerWon(playerTwo, gameBoard.getEmptyPos())) //   gameBoard.addPiece(playerOne.placePiece(0, Position.A1));
         {
             System.out.println("Player one has won");
         } else {
