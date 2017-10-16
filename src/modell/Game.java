@@ -156,7 +156,7 @@ public class Game extends Observable {
         if (placeStage == true) {
             return (ArrayList<String>) gameBoard.getEmptyPosString().clone();
         } else {
-            return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece, gameBoard.getPieces(), getCurrentPlayer());
+            return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece, getCurrentPlayer());
         }
     }
 
@@ -293,7 +293,7 @@ public class Game extends Observable {
      * @return true if current player has won
      */
     public boolean haveCurrentPlayerWon() {
-        return gameRules.haveCurrentPlayerWon(getOtherPlayer(), gameBoard.getPieces(), gameBoard.getEmptyPos());
+        return gameRules.haveCurrentPlayerWon(getOtherPlayer(), gameBoard.getEmptyPos());
     }
 
     /**
@@ -342,7 +342,7 @@ public class Game extends Observable {
      * @return pieces possible to remove
      */
     public ArrayList<String> piecesToRemove() {
-        return gameRules.piecesAbleToRemove(gameBoard.getPieces(), getOtherPlayerPieces());
+        return gameRules.piecesAbleToRemove(getOtherPlayerPieces());
     }
 
     /**
