@@ -398,14 +398,20 @@ public class NineMenMorris extends Application {
         }
 
         public void showHighscore() {
-            String highscore;
+            String highscore ="";
 
             BorderPane backGroundPane = new BorderPane();
 
             File fileBack = new File("src/Images/backgroundAbout.jpg");
             loadBackgroundImage(backGroundPane, fileBack);
-
-            TextField text = new TextField("blablalbal");
+            TextField text = new TextField("ff");
+            
+            /*doesnt work
+            if (!gameSession.getHighScoreTopTen().equals(null)) {
+                text.setText(gameSession.getHighScoreTopTen());
+            }
+            */
+            
             text.setEditable(false);
 
             text.setFont(Font.font(null, FontWeight.BOLD, 25));

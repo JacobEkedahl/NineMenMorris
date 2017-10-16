@@ -15,8 +15,7 @@ import modell.*;
 public class HighScoreTest {
 
     public static void main(String[] args) throws IOException {
-        FileReadingWriting fscore = new FileReadingWriting();
-        fscore.ReadFromFile();
+        HighScore fscore = new HighScore();
         fscore.addToHighScore("Tobias");
         fscore.addToHighScore("Tobias");
         fscore.addToHighScore("Tobias");
@@ -43,6 +42,7 @@ public class HighScoreTest {
         fscore.addToHighScore("Tor");
         System.out.println("Jacob har vunnit: " + fscore.getWins("Jacob"));
         System.out.println(fscore.getTopTen());
+        System.out.println(fscore.toString());
         fscore.writeToFile();
 
     }
