@@ -48,4 +48,8 @@ public class GameState {
     public void zero() {
         state = 0;
     }
+    
+    public void over() {
+        state = 10;
+    }
 }
