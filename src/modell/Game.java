@@ -101,6 +101,10 @@ public class Game {
     public String getHighScoreTopTen(){
         return highScore.getTopTen().toString();
     }
+    
+    public void addToHighScore(String playerName){
+        highScore.addToHighScore(playerName);
+    }
 
     private Piece getPieceInList(int idNumber) {
         ArrayList<Piece> boardPieces = gameBoard.getPieces();

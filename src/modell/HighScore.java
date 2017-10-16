@@ -74,7 +74,7 @@ public class HighScore {
                     out.close();
                 }
             } catch (Exception e) {
-
+                System.out.println("file could not write");
             }
         }
     }
@@ -114,6 +114,7 @@ public class HighScore {
         return topTen;
     }
     
+    @Override
     public String toString(){
         String info=new String();
         ArrayList<Winner> topTen = getTopTen();
