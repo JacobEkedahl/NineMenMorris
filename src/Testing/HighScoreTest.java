@@ -19,7 +19,6 @@ public class HighScoreTest {
         fscore.addToHighScore("Tobias");
         fscore.addToHighScore("Tobias");
         fscore.addToHighScore("Tobias");
-        System.out.println("Tobias har vunnit: " + fscore.getWins("Tobias"));
         fscore.addToHighScore("Jacob");
         fscore.addToHighScore("Jacob");
         fscore.addToHighScore("Svante");
@@ -40,9 +39,11 @@ public class HighScoreTest {
         fscore.addToHighScore("william");
         fscore.addToHighScore("William");
         fscore.addToHighScore("Tor");
-        System.out.println("Jacob har vunnit: " + fscore.getWins("Jacob"));
-        System.out.println(fscore.getTopTen());
+        
+        System.out.println("Tobias har vunnit: " + fscore.getWins("Tobias"));
+        System.out.println("Jacob har vunnit: " + fscore.getWins("Jacob"));       
         System.out.println(fscore.toString());
+        System.out.println(fscore.getTopTen());
         fscore.writeToFile();
 
     }

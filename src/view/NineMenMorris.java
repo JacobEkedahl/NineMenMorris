@@ -577,6 +577,7 @@ public class NineMenMorris extends Application {
                             //has this player won
                             if (gameSession.haveCurrentPlayerWon()) {
                                 newWinner(gameSession.getCurrentPlayer().getName());
+                                highScore.writeToFile();
                             }
                             gameSession.again();
                             updateTurnUI();
