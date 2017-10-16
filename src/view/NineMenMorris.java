@@ -398,7 +398,7 @@ public class NineMenMorris extends Application {
             File fileBack = new File("src/Images/backgroundAbout.jpg");
             loadBackgroundImage(backGroundPane, fileBack);
 
-            TextField text = new TextField("blablalbal");
+            TextField text = new TextField(gameSession.getHighScoreTopTen());
             text.setEditable(false);
 
             text.setFont(Font.font(null, FontWeight.BOLD, 25));
