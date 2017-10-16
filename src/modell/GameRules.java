@@ -6,12 +6,14 @@
 package modell;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
  * @author Jacob
  */
-public class GameRules {
+public class GameRules implements Observer {
 
     private boolean placeStage;
     private ArrayList<Piece> boardPieces;
@@ -333,5 +335,13 @@ public class GameRules {
             }
         }
         return false;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        System.out.println(boardPieces  + " called with: " + arg);
+        if(!boardPieces .equals(arg)){
+            boardPieces = (ArrayList<Piece>) arg; 
+        }
     }
 }

@@ -6,12 +6,13 @@
 package modell;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 /**
  *
  * @author Jacob
  */
-public class Game {
+public class Game extends Observable {
 
     private ArrayList<Piece> moves;
     private boolean playerOneTurn;
@@ -47,6 +48,7 @@ public class Game {
         selectedPiece = new Piece();
         selectedPos = Position.NOPOS;
         gameState = new GameState();
+        addObserver(gameRules);
         
     }
 
@@ -234,6 +236,8 @@ public class Game {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
         counter--;
         updatePlaceStage();
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     /**
@@ -256,6 +260,8 @@ public class Game {
      */
     public void removePiece(int idNumber) {
         gameBoard.removePiece(idNumber);
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     public boolean isPieceOnBoard(int idNumber) {
@@ -299,6 +305,8 @@ public class Game {
      */
     public void placePiece(int pieceId, Position newPos) {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     /**
@@ -353,6 +361,8 @@ public class Game {
      */
     public void movePiece(int pieceId, Position newPos) {
         gameBoard.movePiece(pieceId, newPos);
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     /**
@@ -362,6 +372,8 @@ public class Game {
      */
     public void movePiece(int pieceId, String newPos) {
         gameBoard.movePiece(pieceId, Position.valueOf(newPos));
+        setChanged();
+        notifyObservers(gameBoard.getPieces());
     }
 
     /**
