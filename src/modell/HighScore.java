@@ -28,11 +28,7 @@ public class HighScore {
     public HighScore() {
         fileName = new String(System.getProperty("user.dir") + "highScore.ser");
         winners = new ArrayList();
-        try {
-            this.readFromFile();
-        } catch (IOException ex) {
-            Logger.getLogger(HighScore.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        readFromFile();
     }
 
     public void addToHighScore(String winner) {
@@ -79,7 +75,7 @@ public class HighScore {
         }
     }
 
-    public void readFromFile() throws IOException {
+    public void readFromFile() {
         ObjectInputStream in = null;
         
         System.out.println("read from file " + fileName);

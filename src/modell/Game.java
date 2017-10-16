@@ -99,6 +99,9 @@ public class Game {
     }
     
     public String getHighScoreTopTen(){
+        addToHighScore("Tobias");
+        addToHighScore("Tobias");
+        addToHighScore("Jacob");
         return highScore.getTopTen().toString();
     }
     
