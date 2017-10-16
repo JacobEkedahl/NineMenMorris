@@ -59,6 +59,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import modell.Game;
+import modell.HighScore;
 import modell.Position;
 
 /**
@@ -392,9 +393,11 @@ public class NineMenMorris extends Application {
     private class Controller {
 
         private Game sharedGame;
+        private HighScore highScore;
 
         Controller(Game game) {
             sharedGame = game;
+            highScore = new HighScore();
         }
 
         public void showHighscore() {
@@ -403,18 +406,14 @@ public class NineMenMorris extends Application {
             BorderPane backGroundPane = new BorderPane();
 
             File fileBack = new File("src/Images/backgroundAbout.jpg");
-            TextField text;
+            TextField text = new TextField(highScore.toString());
             loadBackgroundImage(backGroundPane, fileBack);
-            if(!gameSession.equals(null))
-                text = new TextField(gameSession.getHighScoreTopTen());
-            else
-                text = new TextField("Could not find highscore");
+
             /*doesnt work
             if (!gameSession.getHighScoreTopTen().equals(null)) {
                 text.setText(gameSession.getHighScoreTopTen());
             }
-            */
-            
+             */
             text.setEditable(false);
 
             text.setFont(Font.font(null, FontWeight.BOLD, 25));
@@ -424,6 +423,14 @@ public class NineMenMorris extends Application {
             copyright.setFill(Color.WHITE);
             backGroundPane.setBottom(copyright);
             newWindow(backGroundPane, "Highscore", 805, 590);
+        }
+
+        public String getHighScoreTopTen() {
+            return highScore.toString();
+        }
+
+        public void addToHighScore(String playerName) {
+            highScore.addToHighScore(playerName);
         }
 
         public void positionExit(Event event) {
