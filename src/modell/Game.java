@@ -15,28 +15,40 @@ public class Game {
 
     private ArrayList<Piece> moves;
     private boolean playerOneTurn;
-    private HumanPlayer playerOne;
-    private HumanPlayer playerTwo;
+    private Player playerOne;
+    private Player playerTwo;
     private GameBoard gameBoard;
     private boolean gameRunning;
     private GameRules gameRules;
     private boolean placeStage;
-    
+    private boolean againstAI;
 
     private Piece selectedPiece;
     private Position selectedPos;
     private GameState gameState;
     private static int counter = 18;
-    
-    public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
+
+    public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName, boolean againstAi) {
+        againstAI = againstAi;
         moves = new ArrayList<>();
-        if (!isPlayerOneBlack) { //playerOne white
-            playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
-            playerTwo = new HumanPlayer(playerTwoName, !isPlayerOneBlack);
+        if (againstAi == false) {
+            if (!isPlayerOneBlack) { //playerOne white
+                playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
+                playerTwo = new HumanPlayer(playerTwoName, !isPlayerOneBlack);
+            } else {
+                playerOne = new HumanPlayer(playerTwoName, isPlayerOneBlack);
+                playerTwo = new HumanPlayer(playerOneName, !isPlayerOneBlack);
+            }
         } else {
-            playerOne = new HumanPlayer(playerTwoName, isPlayerOneBlack);
-            playerTwo = new HumanPlayer(playerOneName, !isPlayerOneBlack);
+            if (!isPlayerOneBlack) { //playerOne white
+                playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
+                playerTwo = new AI(playerTwoName, !isPlayerOneBlack);
+            } else {
+                playerOne = new AI(playerTwoName, isPlayerOneBlack);
+                playerTwo = new HumanPlayer(playerOneName, !isPlayerOneBlack);
+            }
         }
+
         counter = 18;
         playerOneTurn = !isPlayerOneBlack; //Player with white start
         gameBoard = new GameBoard();
@@ -47,7 +59,11 @@ public class Game {
         selectedPiece = new Piece();
         selectedPos = Position.NOPOS;
         gameState = new GameState();
-        
+
+    }
+    
+    public boolean againstAI() {
+        return this.againstAI;
     }
 
     /**
@@ -99,8 +115,6 @@ public class Game {
     public void over() {
         gameState.over();
     }
-    
-    
 
     private Piece getPieceInList(int idNumber) {
         ArrayList<Piece> boardPieces = gameBoard.getPieces();
@@ -149,7 +163,7 @@ public class Game {
      */
     public ArrayList<String> getOption(Piece selectedPiece) {
         if (playerOneTurn) {
-            
+
         }
         if (placeStage == true) {
             return (ArrayList<String>) gameBoard.getEmptyPosString().clone();
@@ -167,7 +181,7 @@ public class Game {
      * @param playerPieces
      * @return selected players pieces
      */
-    public ArrayList<Piece> getPlayerPieces(HumanPlayer playerPieces) {
+    public ArrayList<Piece> getPlayerPieces(Player playerPieces) {
         return playerPieces.getPieces();
     }
 
@@ -200,7 +214,7 @@ public class Game {
      *
      * @return the player whose turn it is
      */
-    public HumanPlayer getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         if (playerOneTurn) {
             return playerOne;
         } else {
@@ -240,7 +254,7 @@ public class Game {
      * checks if players have exited the placing phase
      */
     private void updatePlaceStage() {
-        
+
         System.out.println(counter + " PLACE STAGE");
         if (counter == 0) {
             placeStage = false;
@@ -316,7 +330,7 @@ public class Game {
      *
      * @return player whose turn it is not
      */
-    public HumanPlayer getOtherPlayer() {
+    public Player getOtherPlayer() {
         if (playerOneTurn) {
             return playerTwo;
         } else {
@@ -328,9 +342,9 @@ public class Game {
         Position p = Position.NOPOS;
         return p;
     }
-    
+
     /**
-     * 
+     *
      * @return pieces possible to remove
      */
     public ArrayList<String> piecesToRemove() {
@@ -357,8 +371,9 @@ public class Game {
 
     /**
      * moves selected piece to selected new position
+     *
      * @param pieceId
-     * @param newPos 
+     * @param newPos
      */
     public void movePiece(int pieceId, String newPos) {
         gameBoard.movePiece(pieceId, Position.valueOf(newPos));
@@ -369,6 +384,31 @@ public class Game {
      */
     public void changePlayerTurn() {
         playerOneTurn = !playerOneTurn;
+    }
+    
+    public AI getAI() {
+        if (playerOne instanceof AI) {
+            return (AI) playerOne;
+        } else if (playerTwo instanceof AI) {
+            return (AI) playerTwo;
+        }
+        return null;
+    }
+
+    public void AIselectPiece() {
+        this.setSelectedPiece(Integer.parseInt(getAI().selectPiece(getPlaceStage(), gameBoard.getPieces(), getPlayerPieces(getAI()))));
+    }
+    
+    public void AIselectPosition() {
+        this.setSelectedPosition(AIselectPos(getAI()));
+    }
+
+    public String AIremovePiece(AI aiPlayer) {
+        return aiPlayer.removePiece(getOtherPlayer().getPieces());
+    }
+    
+    public String AIselectPos(AI aiPlayer) {
+        return aiPlayer.selectPosition(gameBoard.getEmptyPos());
     }
 
     /**

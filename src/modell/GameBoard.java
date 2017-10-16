@@ -39,7 +39,7 @@ public class GameBoard {
      * @param player
      * @return current pieces on board
      */
-    public ArrayList<Piece> getPlayerPieces(HumanPlayer player) {
+    public ArrayList<Piece> getPlayerPieces(Player player) {
         ArrayList<Piece> playerPieces = new ArrayList<Piece>();
         for (Piece p: boardPieces) {
             if (p.isBlackEqual(player.isBlack())) {

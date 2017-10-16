@@ -531,6 +531,10 @@ public class NineMenMorris extends Application {
 
                             gameSession.again();
                             updateTurnUI();
+
+                            if (gameSession.againstAI()) {
+                                aiMoves();
+                            }
                         }
                     }
                 }
@@ -580,6 +584,11 @@ public class NineMenMorris extends Application {
                             }
                             gameSession.again();
                             updateTurnUI();
+
+                            if (gameSession.againstAI()) {
+                                aiMoves();
+                            }
+                            
                         }
                     }
                 }
@@ -617,6 +626,15 @@ public class NineMenMorris extends Application {
             }
         }
 
+        public void aiMoves() {
+                gameSession.AIselectPiece();
+                gameSession.AIselectPosition();
+                //gameSession.placePiece(Integer.parseInt(gameSession.getSelectedPieceID()), "A1");
+                movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
+                gameSession.again();
+                updateTurnUI();
+        }
+
         /**
          * Private method for the positionClicked method, it handles event when
          * player tries to select a piece during the normal phase of the game
@@ -638,7 +656,7 @@ public class NineMenMorris extends Application {
                         gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId()));
                     }
                 }
-                System.out.println(Integer.parseInt(tempPiece.getId()) + " is id");
+                // SysAItem.out.println(Integer.parseInt(tempPiece.getId()) + " is id");
                 System.out.println(tempPiece.getId() + " Id of imageView");
                 gameSession.next();
             }
@@ -662,6 +680,9 @@ public class NineMenMorris extends Application {
 
                     gameSession.again();
                     updateTurnUI();
+                    if (gameSession.againstAI()) {
+                        aiMoves();
+                    }
                     MaskAll();
                 }
             }
@@ -713,6 +734,10 @@ public class NineMenMorris extends Application {
                     unMask();
                     gameSession.again();
                     updateTurnUI();
+
+                    if (gameSession.againstAI()) {
+                        aiMoves();
+                    }
 
                     for (String s : hovarablePositions) {
                         System.out.println(s);
@@ -888,7 +913,7 @@ public class NineMenMorris extends Application {
                     return;
                 }
             }
-            initGameUIModell(playerIsBlack, playerOneName, playerTwoName);
+            initGameUIModell(playerIsBlack, playerOneName, playerTwoName, againstAi);
             isGameRunning = true;
         }
 
@@ -902,9 +927,9 @@ public class NineMenMorris extends Application {
          * @param playerOneName
          * @param playerTwoName
          */
-        public void initGameUIModell(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
+        public void initGameUIModell(boolean isPlayerOneBlack, String playerOneName, String playerTwoName, boolean againstAi) {
 
-            gameSession = new Game(isPlayerOneBlack, playerOneName, playerTwoName);
+            gameSession = new Game(isPlayerOneBlack, playerOneName, playerTwoName, againstAi);
             //initiate gamevariables
             stringPos = new String[]{"A7", "D7", "G7",
                 "A4", "G4",

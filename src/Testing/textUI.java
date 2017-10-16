@@ -19,7 +19,7 @@ public class textUI {
 
     private static void playerPlacePiece(Game game) {
         String colorPlayer = "";
-        HumanPlayer player = game.getCurrentPlayer();
+        HumanPlayer player = (HumanPlayer) game.getCurrentPlayer();
         if (player.isBlack()) {
             colorPlayer = "Black";
         } else {
@@ -86,7 +86,7 @@ public class textUI {
     }
 
     private static void playerMovePiece(Game game) {
-        HumanPlayer player = game.getCurrentPlayer();
+        HumanPlayer player = (HumanPlayer) game.getCurrentPlayer();
         System.out.println("Move piece!!");
         String colorPlayer = "";
         if (player.isBlack()) {
@@ -170,7 +170,7 @@ public class textUI {
 
     private static void mainLoop() {
 
-        Game game = new Game(false, "Player 1", "Player 2");
+        Game game = new Game(false, "Player 1", "Player 2", true);
         while (game.isGameRunning()) {
             if (game.getPlaceStage()) {
                 playerPlacePiece(game);
