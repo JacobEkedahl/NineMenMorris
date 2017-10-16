@@ -26,7 +26,8 @@ public class Game {
     private Piece selectedPiece;
     private Position selectedPos;
     private GameState gameState;
-
+    private static int counter = 18;
+    
     public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
         moves = new ArrayList<>();
         if (!isPlayerOneBlack) { //playerOne white
@@ -36,6 +37,7 @@ public class Game {
             playerOne = new HumanPlayer(playerTwoName, isPlayerOneBlack);
             playerTwo = new HumanPlayer(playerOneName, !isPlayerOneBlack);
         }
+        counter = 18;
         playerOneTurn = !isPlayerOneBlack; //Player with white start
         gameBoard = new GameBoard();
         placeStage = true;
@@ -108,7 +110,7 @@ public class Game {
         ArrayList<Piece> playerTwoPieces = playerTwo.getPieces();
 
         for (Piece p : boardPieces) {
-            if (p.isIdEqual(idNumber)) {
+            if (p.getId() == idNumber) {
                 return p;
             }
         }
@@ -148,10 +150,13 @@ public class Game {
      * @return possible moves for selected piece
      */
     public ArrayList<String> getOption(Piece selectedPiece) {
+        if (playerOneTurn) {
+            
+        }
         if (placeStage == true) {
             return (ArrayList<String>) gameBoard.getEmptyPosString().clone();
         } else {
-            return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece);
+            return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece, gameBoard.getPieces(), getCurrentPlayer());
         }
     }
 
@@ -229,6 +234,7 @@ public class Game {
      */
     public void placePiece(int pieceId, String newPos) {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
+        counter--;
         updatePlaceStage();
     }
 
@@ -236,7 +242,9 @@ public class Game {
      * checks if players have exited the placing phase
      */
     private void updatePlaceStage() {
-        if (playerOne.getNoOfPieces() + playerTwo.getNoOfPieces() == 0) {
+        
+        System.out.println(counter + " PLACE STAGE");
+        if (counter == 0) {
             placeStage = false;
         } else {
             placeStage = true;

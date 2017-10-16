@@ -252,8 +252,14 @@ public class NineMenMorris extends Application {
             Random rand = new Random();
             int xValue = 800 * (rand.nextInt(4) + 1);
             int yValue = 700 * (rand.nextInt(5) + 1);
-            x -= x;
-            y -= y;
+            if (gameSession.getPlaceStage()) {
+                x -= x;
+                y -= y;
+            } else {
+                //ImageView tempView = getPieceByID(pieceId);
+                x = image.getX();
+                y = image.getY();
+            }
             line = new Line(x + 25, y + 25, xValue, yValue);
         } else {
             ImageView positionImg = getPositionByID(pos);
@@ -398,20 +404,19 @@ public class NineMenMorris extends Application {
         }
 
         public void showHighscore() {
-            String highscore ="";
+            String highscore = "";
 
             BorderPane backGroundPane = new BorderPane();
 
             File fileBack = new File("src/Images/backgroundAbout.jpg");
             loadBackgroundImage(backGroundPane, fileBack);
             TextField text = new TextField("ff");
-            
+
             /*doesnt work
             if (!gameSession.getHighScoreTopTen().equals(null)) {
                 text.setText(gameSession.getHighScoreTopTen());
             }
-            */
-            
+             */
             text.setEditable(false);
 
             text.setFont(Font.font(null, FontWeight.BOLD, 25));
@@ -434,6 +439,18 @@ public class NineMenMorris extends Application {
             unvisible.clear();
         }
 
+        public void MaskAll() {
+            for (ImageView view : positionImages) {
+                view.setVisible(false);
+            }
+        }
+
+        public void unMaskAll() {
+            for (ImageView view : positionImages) {
+                view.setVisible(true);
+            }
+        }
+
         public void positionEnter(Event event) {
             hovarablePositions = gameSession.getFreePos();
             ImageView targetView = (ImageView) event.getSource();
@@ -444,7 +461,9 @@ public class NineMenMorris extends Application {
             }
         }
 
-        public void positionClicked(Event event) {
+        private void positionStage(Event event) {
+            System.out.println("move from ui");
+
             ImageView selectPos = (ImageView) event.getSource();
             System.out.println(selectPos);
             hovarablePositions = gameSession.getFreePos();
@@ -456,6 +475,8 @@ public class NineMenMorris extends Application {
                         if (gameSession.getPlaceStage()) {
                             gameSession.placePiece(Integer.parseInt(gameSession.getSelectedPieceID()), gameSession.getSelectedPosition());
                         } else {
+
+                            System.out.println("Piece moved to :" + gameSession.getSelectedPosition());
                             gameSession.movePiece(Integer.parseInt(gameSession.getSelectedPieceID()), gameSession.getSelectedPosition());
                             if (gameSession.haveCurrentPlayerWon()) {
                                 System.out.println("Game over");
@@ -468,6 +489,10 @@ public class NineMenMorris extends Application {
                             gameSession.next();
                             System.out.println("Mill!");
                         } else {
+                            if (!gameSession.getPlaceStage()) {
+                                MaskAll();
+                            }
+
                             gameSession.again();
                             updateTurnUI();
                         }
@@ -475,18 +500,112 @@ public class NineMenMorris extends Application {
                 }
 
             }
+        }
 
+        private void positionClickedNormal(Event event) {
+            MaskAll();
+            ImageView selectPos = (ImageView) event.getSource();
+
+            if (gameSession.getState() == 1) {
+                hovarablePositions = gameSession.getOption(gameSession.getSelectedPiece());
+                System.out.println("The selected piece is: " + gameSession.getSelectedPieceID());
+                for (String s : hovarablePositions) {
+                    System.out.println(s + " is a possible move");
+                }
+                for (int i = 0; i < hovarablePositions.size(); i++) {
+                    if (convertIDtoString(selectPos.getId()).equals(hovarablePositions.get(i))) {
+                        System.out.println(selectPos.getId() + " is the id of pos"); //and is a possible move
+
+                        gameSession.setSelectedPosition(convertIDtoString(selectPos.getId()));
+                        gameSession.movePiece(Integer.parseInt(gameSession.getSelectedPieceID()), Position.valueOf(gameSession.getSelectedPosition()));
+                        movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
+
+                        //do this player have a mill
+                        if (gameSession.isMill(gameSession.getSelectedPiece(), gameSession.getGameBoardPieces())) {
+                            gameSession.next();
+                            System.out.println("Mill!");
+                        } else {
+                            //has this player won
+                            if (gameSession.haveCurrentPlayerWon()) {
+                                System.out.println("YayyyQ!");
+                            }
+                            gameSession.again();
+                            updateTurnUI();
+                        }
+
+                    }
+                }
+            }
+        }
+
+        public void positionClicked(Event event) {
+            if (gameSession.getPlaceStage()) {
+                positionStage(event);
+            } else {
+                positionClickedNormal(event);
+            }
+        }
+
+        private void selectedPieceNormal(Event event) {
+            ImageView tempPiece = new ImageView();
+            tempPiece = (ImageView) event.getSource();
+            unMaskAll();
+
+            if (gameSession.getState() == 0) {
+                if (gameSession.getCurrentPlayer().isBlack()) {
+                    if (Integer.parseInt(tempPiece.getId()) > 8) {
+                        gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId())); //modell change
+                    }
+                } else {
+                    if (Integer.parseInt(tempPiece.getId()) < 9) {
+                        gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId()));
+                    }
+                }
+                System.out.println(Integer.parseInt(tempPiece.getId()) + " is id");
+                System.out.println(tempPiece.getId() + " Id of imageView");
+                gameSession.next();
+            }
+
+            if (gameSession.getState() == 2) {
+                if (!gameSession.getCurrentPlayer().isBlack()) {
+                    if (Integer.parseInt(tempPiece.getId()) > 8) {
+                        gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId())); //modell change
+                    }
+                } else {
+                    gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId()));
+                }
+                if (gameSession.isPieceOnBoard(Integer.parseInt(tempPiece.getId()))) {
+                    movePiece(tempPiece.getId(), "NOPOS"); //send it away on UI
+                    gameSession.removePiece(Integer.parseInt(tempPiece.getId())); //remove from Modell
+                    //Look if thisplayer has one
+                    if (gameSession.haveCurrentPlayerWon()) {
+                        System.out.println("YAAAAAY!");
+                        //call method gaemWon with playerName as parameter in
+                    }
+
+                    gameSession.again();
+                    updateTurnUI();
+                    MaskAll();
+                }
+            }
         }
 
         public void selectPiece(Event event) {
             changeAllImagesInList(whitePieces, initImagePieceWhite()); //std image
             changeAllImagesInList(blackPieces, initImagePieceBlack());
 
+            if (gameSession.getPlaceStage()) {
+                voidSelectPieceStage(event);
+            } else {
+                selectedPieceNormal(event);
+            }
+        }
+
+        private void voidSelectPieceStage(Event event) {
             ImageView tempPiece = new ImageView();
             tempPiece = (ImageView) event.getSource();
 
-            System.out.println(gameSession.getState());
-            if (gameSession.getState() == 0 || gameSession.getState() == 1) {
+            if (gameSession.getState() == 0 || gameSession.getState() == 1) { //Being able to change choice before clicking on a pos
                 //first stage
                 if (gameSession.getCurrentPlayer().isBlack()) {
                     if (Integer.parseInt(tempPiece.getId()) > 8) {
@@ -501,7 +620,7 @@ public class NineMenMorris extends Application {
                         hovarablePositions = gameSession.getOption(gameSession.getSelectedPiece());
                     }
                 }
-                if (gameSession.getState() == 0) {
+                if (gameSession.getState() == 0) { //change state when position needs to be observent for input
                     gameSession.next();
                 }
             } else if (gameSession.getState() == 2) {
@@ -517,9 +636,9 @@ public class NineMenMorris extends Application {
                     //positionReset(gameSession.positionFromPiece(Integer.parseInt(tempPiece.getId())));
                     movePiece(tempPiece.getId(), "NOPOS");
                     gameSession.removePiece(Integer.parseInt(tempPiece.getId())); //needs to check if this piece is on gameBoard
-                    unMask();
                     //remove piece
                     //check if player has won
+                    unMask();
                     gameSession.again();
                     updateTurnUI();
 
