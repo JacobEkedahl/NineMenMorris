@@ -149,6 +149,10 @@ public class Game {
         }
     }
 
+    public ArrayList<String> getFreePos() {
+        return (ArrayList<String>) gameBoard.getEmptyPosString().clone();
+    }
+
     /**
      *
      * @param playerPieces
@@ -242,6 +246,26 @@ public class Game {
         gameBoard.removePiece(idNumber);
     }
 
+    public boolean isPieceOnBoard(int idNumber) {
+        ArrayList<Piece> gamePieces = gameBoard.getPieces();
+        for (int i = 0; i < gamePieces.size(); i++) {
+            if (gamePieces.get(i).getId() == idNumber) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String positionFromPiece(int id) {
+        ArrayList<Piece> boardPieces = gameBoard.getPieces();
+        for (int i = 0; i < boardPieces.size(); i++) {
+            if (boardPieces.get(i).getId() == id) {
+                return boardPieces.get(i).getPos().name();
+            }
+        }
+        return null;
+    }
+
     /**
      * Checks if the currently selected player has won the game
      *
@@ -287,12 +311,12 @@ public class Game {
             return playerOne;
         }
     }
-    
+
     public Position getNoPos() {
         Position p = Position.NOPOS;
         return p;
     }
-    
+
     public ArrayList<String> piecesToRemove() {
         return gameRules.piecesAbleToRemove(gameBoard.getPieces(), getOtherPlayerPieces());
     }
