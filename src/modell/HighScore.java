@@ -115,7 +115,7 @@ public class HighScore {
         String info=new String();
         ArrayList<Winner> topTen = getTopTen();
         for(int i=0;i<topTen.size();i++){
-            info+=topTen.get(i).toString()+"\n";
+            info+=topTen.get(i).toString()+" \n";
         }
         return info;
     }

@@ -102,7 +102,7 @@ public class Game {
         addToHighScore("Tobias");
         addToHighScore("Tobias");
         addToHighScore("Jacob");
-        return highScore.getTopTen().toString();
+        return highScore.toString();
     }
     
     public void addToHighScore(String playerName){

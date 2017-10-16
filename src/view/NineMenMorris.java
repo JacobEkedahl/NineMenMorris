@@ -398,14 +398,17 @@ public class NineMenMorris extends Application {
         }
 
         public void showHighscore() {
-            String highscore ="";
+            String highscore = "";
 
             BorderPane backGroundPane = new BorderPane();
 
             File fileBack = new File("src/Images/backgroundAbout.jpg");
+            TextField text;
             loadBackgroundImage(backGroundPane, fileBack);
-            TextField text = new TextField("ff");
-            
+            if(!gameSession.equals(null))
+                text = new TextField(gameSession.getHighScoreTopTen());
+            else
+                text = new TextField("Could not find highscore");
             /*doesnt work
             if (!gameSession.getHighScoreTopTen().equals(null)) {
                 text.setText(gameSession.getHighScoreTopTen());
