@@ -143,13 +143,13 @@ public class GameRules {
      * @param selectedPiece
      * @return
      */
-    public ArrayList<Position> getOptionMove(ArrayList<Position> free, Piece selectedPiece) {
-        ArrayList<Position> freePos = new ArrayList<>();
+    public ArrayList<String> getOptionMove(ArrayList<Position> free, Piece selectedPiece) {
+        ArrayList<String> freePos = new ArrayList<>();
         ArrayList<String> adjPos = getAdjPos(selectedPiece.getPos().name());
         for (Position p : free) {
             for (String s : adjPos) {
                 if (posToString(p).equals(s) && !freePos.contains(s)) {
-                    freePos.add(p);
+                    freePos.add(p.name());
                 }
             }
         }

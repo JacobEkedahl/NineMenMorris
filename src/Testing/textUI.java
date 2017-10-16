@@ -35,10 +35,12 @@ public class textUI {
         boolean validChoice = false;
 
         int selectedId = sc.nextInt();
+        Piece selectPiece = new Piece();
 
         for (int i = 0; i < playerOnePieces.size(); i++) {
             if (playerOnePieces.get(i).getId() == selectedId) {
                 validChoice = true;
+                selectPiece = playerOnePieces.get(i);
             }
         }
 
@@ -50,14 +52,15 @@ public class textUI {
             for (int i = 0; i < playerOnePieces.size(); i++) {
                 if (playerOnePieces.get(i).getId() == selectedId) {
                     validChoice = true;
+                    selectPiece = playerOnePieces.get(i);
                 }
             }
         }
 
-        ArrayList<Position> freePos = game.getFreePos();
+        ArrayList<String> freePos = game.getOption(selectPiece);
         System.out.println("Available position: ");
         for (int i = 0; i < freePos.size(); i++) {
-            System.out.print(freePos.get(i).name() + " - ");
+            System.out.print(freePos.get(i) + " - ");
         }
         System.out.println("\n");
 
@@ -123,10 +126,10 @@ public class textUI {
             }
         }
 
-        ArrayList<Position> freePos = game.getOption(tempP);
+        ArrayList<String> freePos = game.getOption(tempP);
         System.out.println("Available position: ");
         for (int i = 0; i < freePos.size(); i++) {
-            System.out.print(freePos.get(i).name() + " - ");
+            System.out.print(freePos.get(i) + " - ");
         }
         System.out.println("\n");
 
@@ -147,13 +150,13 @@ public class textUI {
             int chosenPiece = sc.nextInt();
             game.removePiece(chosenPiece);
         }
-        
-                //have currentPlayer won?
-        if (game.haveCurrentPlayerWon(game.getOtherPlayer(), game.getGameBoardPieces(), game.getFreePos())) {
+
+        //have currentPlayer won?
+        if (game.haveCurrentPlayerWon()) {
             System.out.println(game.getCurrentPlayer().getName() + "has won!");
             game.gameOver(); //isnt really needed
         }
-        
+
         game.changePlayerTurn();
     }
 

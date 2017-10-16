@@ -98,6 +98,14 @@ public class GameBoard {
     public ArrayList<Position> getEmptyPos() { 
         return (ArrayList<Position>) freePosition.clone();
     }
+    
+    public ArrayList<String> getEmptyPosString() {
+        ArrayList<String> tempPos = new ArrayList<>();
+        for (Position p: freePosition) {
+            tempPos.add(p.name());
+        }
+        return tempPos;
+    }
 
     /**
      * Goes through all the pieces to find the piece with selected id number

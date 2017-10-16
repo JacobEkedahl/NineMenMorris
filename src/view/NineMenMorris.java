@@ -8,7 +8,9 @@ package view;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
+import javafx.animation.AnimationTimer;
+import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -19,12 +21,16 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -39,11 +45,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import modell.Game;
 
 /**
@@ -57,6 +67,7 @@ public class NineMenMorris extends Application {
     private boolean isPlayerOnePiecesClickable;
     private boolean isPlayerTwoPiecesClickable;
     private boolean isPositionHoverable;
+    private boolean isGameRunning;
 
     private ArrayList<String> hovarablePositions;
 
@@ -71,209 +82,17 @@ public class NineMenMorris extends Application {
     private ArrayList<ImageView> blackPieces;
     private ArrayList<ImageView> positionImages;
 
-    private static Game gameSession;
+    private ImageView pieceToMove;
+    private ImageView positionToMove;
+    private ImageView arrowImage;
+
+    private Game gameSession;
+    private Controller controller;
 
     @Override
     public void start(Stage primaryStage) {
-        //initiate gamevariables
-        String[] stringPos = {
-            "A7", "D7", "G7",
-            "A4", "G4",
-            "A1", "D1", "G1",
-            "B6", "D6", "F6",
-            "B4", "F4",
-            "B2", "D2", "F2",
-            "C5", "D5", "E5",
-            "C4", "E4",
-            "C3", "D3", "E4"
-        };
-        gameRunning = false;
-        isPositionClickable = false;
-        isPlayerOnePiecesClickable = false;
-        isPlayerTwoPiecesClickable = false;
-        isPositionHoverable = false;
-
-        //Menu
-        MenuBar menuBar = new MenuBar();
-        Menu gameMenu = new Menu("Game");
-        Menu helpMenu = new Menu("Help");
-        Menu fileMenu = new Menu("File");
-
-        //MenuItems
-        MenuItem openItem = new MenuItem("Open");
-        MenuItem saveItem = new MenuItem("Save");
-        MenuItem restartGameItem = new MenuItem("New Game"); //alert AI or player?
-        MenuItem regretMoveItem = new MenuItem("Regret last move"); //need a array of moves in game
-        MenuItem aboutItem = new MenuItem("About");
-        MenuItem rulesItem = new MenuItem("Rules");
-
-        //Connecting items to eventhandler
-        newGameHandles newGame = new newGameHandles();
-
-        restartGameItem.setOnAction(newGame);
-
-        itemAboutHandles itemAbout = new itemAboutHandles();
-
-        aboutItem.setOnAction(itemAbout);
-        itemRulesHandles itemRules = new itemRulesHandles();
-
-        rulesItem.setOnAction(itemRules);
-
-        //Connect Menu and items
-        fileMenu.getItems()
-                .addAll(openItem, saveItem);
-        gameMenu.getItems()
-                .addAll(restartGameItem, regretMoveItem);
-        helpMenu.getItems()
-                .addAll(aboutItem, rulesItem);
-        menuBar.getMenus()
-                .addAll(fileMenu, gameMenu, helpMenu);
-
-        //Gameboard positions
-        File filePosition = new File("src/Images/transparentPos.png");
-        Image positionImage = new Image(filePosition.toURI().toString());
-        Group groupOfPos = new Group();
-
-        positionImages = new ArrayList<ImageView>();
-        int positionIndex = 0;
-
-        for (int j = 0;
-                j < 3; j++) { //outer quadrant
-            for (int i = 0; i < 3; i++) { //24 is number of positions
-                if (!(i == 1 && j == 1)) {
-                    ImageView positionView = new ImageView(positionImage);
-                    positionView.setId("#" + positionIndex);
-                    positionIndex++;
-                    positionView.setFitHeight(60); //set size of pieces
-                    positionView.setFitWidth(60);
-                    positionView.setPreserveRatio(true);
-                    positionView.setSmooth(true);
-                    positionView.setLayoutX(-8 + (i * 265));
-                    positionView.setLayoutY(25 + (j * 265));
-                    positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                    positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
-                    positionImages.add(positionView);
-                    groupOfPos.getChildren().add(positionView);
-                }
-            }
-        }
-
-        for (int j = 0;
-                j < 3; j++) { //middle quadrant
-            for (int i = 0; i < 3; i++) { //24 is number of positions
-                if (!(i == 1 && j == 1)) {
-                    ImageView positionView = new ImageView(positionImage);
-                    positionView.setId("" + positionIndex);
-                    positionIndex++;
-                    positionView.setFitHeight(60); //set size of pieces
-                    positionView.setFitWidth(60);
-                    positionView.setPreserveRatio(true);
-                    positionView.setSmooth(true);
-                    positionView.setLayoutX(77 + (i * 180));
-                    positionView.setLayoutY(110 + (j * 180));
-                    positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                    positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
-                    positionImages.add(positionView);
-                    groupOfPos.getChildren().add(positionView);
-                }
-            }
-        }
-
-        for (int j = 0;
-                j < 3; j++) { //inner quadrant
-            for (int i = 0; i < 3; i++) { //24 is number of positions
-                if (!(i == 1 && j == 1)) {
-                    ImageView positionView = new ImageView(positionImage);
-                    positionView.setId("" + positionIndex);
-                    positionIndex++;
-                    positionView.setFitHeight(60); //set size of pieces
-                    positionView.setFitWidth(60);
-                    positionView.setPreserveRatio(true);
-                    positionView.setSmooth(true);
-                    positionView.setLayoutX(157 + (i * 100));
-                    positionView.setLayoutY(190 + (j * 100));
-                    positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                    positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
-                    positionImages.add(positionView);
-                    groupOfPos.getChildren().add(positionView);
-                }
-            }
-        }
-
-        //init Position value to positionviewItems
-        for (int i = 0; i < 24; i++) {
-            positionImages.get(i).setId(positionImages.get(i).getId() + stringPos[i]);
-        }
-
-        //Pieces and players name
-        File file = new File("src/Images/whiteCircle.png");
-        Image imageWhite = new Image(file.toURI().toString());
-        file = new File("src/Images/blackCircle.png");
-        Image imageBlack = new Image(file.toURI().toString());
-
-        whitePieces = new ArrayList<ImageView>();
-        blackPieces = new ArrayList<ImageView>();
-
-        for (int i = 0;
-                i < 9; i++) {
-            ImageView whitePiece = new ImageView(imageWhite);
-            ImageView blackPiece = new ImageView(imageBlack);
-            whitePiece.setFitHeight(50); //set size of pieces
-            whitePiece.setFitWidth(50);
-            blackPiece.setFitHeight(50);
-            blackPiece.setFitWidth(50);
-            blackPiece.setPreserveRatio(true);
-            blackPiece.setSmooth(true);
-            whitePiece.setPreserveRatio(true);
-            whitePiece.setSmooth(true);
-
-            whitePiece.setId("" + i);
-            blackPiece.setId("" + (i + 9));
-            whitePiece.setOnMouseClicked(new pieceClicked());
-            blackPiece.setOnMouseClicked(new pieceClicked());
-
-            whitePieces.add(whitePiece);
-            blackPieces.add(blackPiece);
-        }
-
-        GridPane grid = new GridPane();
-
-        grid.setHgap(
-                10); //horizontal gap in pixels => that's what you are asking for
-        grid.setVgap(
-                10); //vertical gap in pixels
-        grid.setPadding(
-                new Insets(10, 10, 10, 10));
-
-        playerOneLbl = new Label("Player 1");
-        playerTwoLbl = new Label("Player 2");
-
-        addPiecesToGrid(grid, whitePieces,
-                2);
-        grid.add(playerOneLbl,
-                0, 1, 4, 1); //spans over hole row
-        addPiecesToGrid(grid, blackPieces,
-                18);
-        grid.add(playerTwoLbl,
-                0, 17, 4, 1);
-
-        // FlowPane bottomPane = new FlowPane();
-        // bottomPane.getChildren().addAll(newGamebtn, regretLastMovebtn);
-        //Create a game players and get their names and position..
-        //mainPane.setStyle("-fx-background-color: Black");
-        mainPane = new BorderPane();
-        File fileBack = new File("src/Images/backgroundImage.jpg");
-        loadBackgroundImage(mainPane, fileBack);
-
-        mainPane.setTop(menuBar);
-        mainPane.setRight(grid);
-        mainPane.getChildren().add(groupOfPos);
-
-        Scene scene = new Scene(mainPane, 805, 590);
-        primaryStage.setTitle("Nine Men Morris!");
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.show();
+        initStartWindow(primaryStage);
+        isGameRunning = false;
     }
 
     private void addPositionsToBoard(BorderPane mainPane) {
@@ -321,6 +140,24 @@ public class NineMenMorris extends Application {
         }
     }
 
+    public void updateTurnUI() {
+        if (gameSession.getCurrentPlayer().isBlack()) {
+            arrowImage.setImage(initImageArrowBlack());
+        } else {
+            arrowImage.setImage(initImageArrow());
+        }
+    }
+
+    private Image initImageArrow() {
+        File filePiece = new File("src/Images/arrow.png");
+        return new Image(filePiece.toURI().toString());
+    }
+
+    private Image initImageArrowBlack() {
+        File filePiece = new File("src/Images/arrowBlack.png");
+        return new Image(filePiece.toURI().toString());
+    }
+
     private Image initImagePieceWhite() {
         File filePiece = new File("src/Images/whiteCircle.png");
         return new Image(filePiece.toURI().toString());
@@ -341,59 +178,114 @@ public class NineMenMorris extends Application {
         return new Image(filePiece.toURI().toString());
     }
 
+    private Image initImagePositionTrans() {
+        File filePosition = new File("src/Images/transparentPos.png");
+        return new Image(filePosition.toURI().toString());
+    }
+
+    public void movePiece(String pieceId, String pos) {
+        ImageView image = getPieceByID(pieceId);
+        if (image == null) {
+            showText("Cant select your opponents pieces!");
+            return;
+        }
+        ImageView positionImg = getPositionByID(pos);
+
+        double x = image.getLayoutX();
+        double y = image.getLayoutY();
+        double dx = positionImg.getLayoutX() - 680 - x;
+        double dy = positionImg.getLayoutY() + 105 - y;
+        x -= x;
+        y -= y;
+
+        System.out.println("dx: " + dx + " - dy:" + dy);
+        System.out.println("x: " + x + " y: " + y);
+
+        Line line = new Line(x + 25, y + 25, dx + 100, dy - 100);
+
+        PathTransition transition = new PathTransition();
+        transition.setNode(image);
+        transition.setDuration(Duration.seconds(1));
+        transition.setPath(line);
+        transition.setCycleCount(1);
+        transition.play();
+    }
+
+    private ImageView getPositionByID(String id) {
+        for (int i = 0; i < positionImages.size(); i++) {
+            if (positionImages.get(i).getId().contains(id)) {
+                return positionImages.get(i);
+            }
+        }
+        return null;
+    }
+
+    private String convertIDtoString(String id) {
+        String targetPos = id;
+        if (targetPos.length() == 4) {
+            targetPos = targetPos.substring(2);
+        } else {
+            targetPos = targetPos.substring(3);
+        }
+        return targetPos;
+    }
+
+    private ImageView getPieceByID(String id) {
+        if (gameSession.getCurrentPlayer().isBlack()) {
+            for (int i = 9; i < blackPieces.size() + 9; i++) {
+                if (blackPieces.get(i).getId().equals(id)) {
+                    return blackPieces.get(10);
+                }
+            }
+        } else {
+            for (int i = 0; i < whitePieces.size(); i++) {
+                if (whitePieces.get(i).getId().equals(id)) {
+                    return whitePieces.get(i);
+                }
+            }
+        }
+        return null;
+    }
+
+    private void showText(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("About");
+        alert.setContentText(message);
+        alert.show();
+    }
+
     private class pieceClicked implements EventHandler<MouseEvent> {
 
         @Override
         public void handle(MouseEvent event) {
-            changeAllImagesInList(whitePieces, initImagePieceWhite()); //std image
-            changeAllImagesInList(blackPieces, initImagePieceBlack());
-
-            ImageView tempPiece = new ImageView();
-            tempPiece = (ImageView) event.getSource();
-
-            if (Integer.parseInt(tempPiece.getId()) < 9) {
-                changeImageInList(whitePieces, initImagePieceWhiteMarked(), tempPiece.getId());
-            } else {
-                changeImageInList(blackPieces, initImagePieceBlackMarked(), tempPiece.getId());
-            }
-
-            System.out.println(tempPiece.getId());
+            controller.selectPiece(event);
+            updateTurnUI();
+            gameSession.changePlayerTurn();
         }
+    }
+
+    private class positionClicked implements EventHandler<MouseEvent> {
+
+        @Override
+        public void handle(MouseEvent event) {
+            controller.positionClicked(event);
+        }
+
     }
 
     private class positionExit implements EventHandler<MouseEvent> {
 
         @Override
         public void handle(MouseEvent event) {
-            ImageView targetView = (ImageView) event.getSource();
-            for (int i = 0; i < positionImages.size(); i++) {
-                if (targetView.getId().equals(positionImages.get(i).getId())) {
-                    File filePosition = new File("src/Images/transparentPos.png");
-                    Image positionImage = new Image(filePosition.toURI().toString());
-                    positionImages.get(i).setImage(positionImage);
-
-                }
-            }
-            System.out.println(targetView.getId());
+            controller.positionExit(event);
         }
-
     }
 
     private class positionEnter implements EventHandler<MouseEvent> {
 
         @Override
         public void handle(MouseEvent event) {
-            ImageView targetView = (ImageView) event.getSource();
-            for (int i = 0; i < positionImages.size(); i++) {
-                if (targetView.getId().equals(positionImages.get(i).getId())) {
-                    File filePosition = new File("src/Images/hoverPosition.png");
-                    Image positionImage = new Image(filePosition.toURI().toString());
-
-                    positionImages.get(i).setImage(positionImage);
-
-                }
-            }
-            System.out.println(targetView.getId());
+            controller.positionEnter(event);
         }
     }
 
@@ -401,23 +293,115 @@ public class NineMenMorris extends Application {
 
         @Override
         public void handle(ActionEvent event) {
-            if (gameRunning == true) {
-                gameRunning = false;
-                //stop current thread then set value to false
-            } else {
-            }
-            //start gamethread
-            /* while (true) {
-                System.out.println("gameloop");
-            }
-             */
+            controller.initGame();
         }
+    }
+
+    private void setTextStyle(Text text) {
+        text.setFill(Color.WHITE);
+        text.setFont(Font.font(null, FontWeight.BOLD, 25));
     }
 
     private class itemAboutHandles implements EventHandler<ActionEvent> {
 
         @Override
         public void handle(ActionEvent event) {
+            controller.showAbout();
+        }
+    }
+
+    private class itemRulesHandles implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            controller.showRules();
+        }
+    }
+
+    private class itemHighscoreHandles implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            controller.showHighscore();
+        }
+
+    }
+
+    private class Controller {
+
+        private Game sharedGame;
+
+        Controller(Game game) {
+            sharedGame = game;
+        }
+
+        public void showHighscore() {
+            String highscore;
+
+            BorderPane backGroundPane = new BorderPane();
+
+            //Button btn = new Button("Hello");
+            //backGroundPane.getChildren().add(btn);
+            File fileBack = new File("src/Images/backgroundAbout.jpg");
+            loadBackgroundImage(backGroundPane, fileBack);
+
+            TextField text = new TextField("blablalbal");
+            text.setEditable(false);
+
+            text.setFont(Font.font(null, FontWeight.BOLD, 25));
+
+            backGroundPane.setCenter(text);
+            Text copyright = new Text("©JacobsCode, 2017");
+            copyright.setFill(Color.WHITE);
+            backGroundPane.setBottom(copyright);
+            newWindow(backGroundPane, "Highscore", 805, 590);
+        }
+
+        public void positionExit(Event event) {
+            Image positionImage = initImagePositionTrans();
+            ImageView targetView = (ImageView) event.getSource();
+            for (int i = 0; i < positionImages.size(); i++) {
+                if (targetView.getId().equals(positionImages.get(i).getId())) {
+                    positionImages.get(i).setImage(positionImage);
+                }
+            }
+        }
+
+        public void positionEnter(Event event) {
+            ArrayList<String> hovPos = gameSession.getOption(gameSession.getSelectedPiece());
+            ImageView targetView = (ImageView) event.getSource();
+            String targetPos = convertIDtoString(targetView.getId());
+
+            for (int i = 0; i < positionImages.size(); i++) {
+                if (targetView.getId().equals(positionImages.get(i).getId()) && hovPos.contains(targetPos)) {
+                    File filePosition = new File("src/Images/hoverPosition.png");
+                    Image positionImage = new Image(filePosition.toURI().toString());
+
+                    positionImages.get(i).setImage(positionImage);
+
+                }
+            }
+        }
+
+        public void selectPiece(Event event) {
+            changeAllImagesInList(whitePieces, initImagePieceWhite()); //std image
+            changeAllImagesInList(blackPieces, initImagePieceBlack());
+
+            ImageView tempPiece = new ImageView();
+            tempPiece = (ImageView) event.getSource();
+
+            if (Integer.parseInt(tempPiece.getId()) < 9) { //if gamestate 
+                changeImageInList(whitePieces, initImagePieceWhiteMarked(), tempPiece.getId());
+                //changeState
+            } else {
+                changeImageInList(blackPieces, initImagePieceBlackMarked(), tempPiece.getId());
+            }
+
+            gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId()));
+
+        }
+
+        public void showAbout() {
             BorderPane backGroundPane = new BorderPane();
 
             //Button btn = new Button("Hello");
@@ -434,14 +418,10 @@ public class NineMenMorris extends Application {
             Text copyright = new Text("©JacobsCode, 2017");
             copyright.setFill(Color.WHITE);
             backGroundPane.setBottom(copyright);
-            newWindow(backGroundPane);
+            newWindow(backGroundPane, "About", 805, 590);
         }
-    }
 
-    private class itemRulesHandles implements EventHandler<ActionEvent> {
-
-        @Override
-        public void handle(ActionEvent event) {
+        public void showRules() {
             BorderPane backGroundPane = new BorderPane();
 
             //Button btn = new Button("Hello");
@@ -469,23 +449,276 @@ public class NineMenMorris extends Application {
             Text copyright = new Text("©JacobsCode, 2017");
             copyright.setFill(Color.WHITE);
             backGroundPane.setBottom(copyright);
-            newWindow(backGroundPane);
+            newWindow(backGroundPane, "Rules", 805, 590);
+        }
+
+        public void initGame() {
+
+            String playerOneName = "Player 1";
+            String playerTwoName = "Player 2";
+            boolean againstAi = false;
+            boolean playerIsBlack = false;
+
+            if (isGameRunning) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("End game");
+                alert.setHeaderText("Do you wish to end the current game?");
+                alert.setContentText("Are you ok with this?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    gameSession.gameOver();
+                } else {
+                    showText("Ok continue!");
+                    return;
+                }
+            }
+
+            TextInputDialog dialog = new TextInputDialog("Player 1");
+            dialog.setTitle("Player 1 name");
+            dialog.setHeaderText("Enter name");
+            dialog.setContentText("Please enter your name:");
+
+// Traditional way to get the response value.
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                playerOneName = result.get();
+            } else {
+                showText("Ok continue!");
+                return;
+            }
+            System.out.println(playerOneName);
+
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Choose color");
+            alert.setHeaderText("Black or white");
+            alert.setContentText("Do you wish to have white pieces?");
+
+            ButtonType buttonTypeOne = new ButtonType("Yes");
+            ButtonType buttonTypeTwo = new ButtonType("No");
+
+            alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+
+            Optional<ButtonType> resultBlack = alert.showAndWait();
+            if (resultBlack.get() == buttonTypeOne) {
+                playerIsBlack = false;
+            } else if (resultBlack.get() == buttonTypeTwo) {
+                playerIsBlack = true;
+            } else {
+                showText("Ok continue!");
+                return;
+            }
+            System.out.println(playerIsBlack);
+
+            Alert alertAI = new Alert(AlertType.CONFIRMATION);
+            alertAI.setTitle("Choose opponent");
+            alertAI.setHeaderText("Against AI?");
+            alertAI.setContentText("Do you wish to play against an AI instead of human?");
+
+            ButtonType buttonYes = new ButtonType("Yes");
+            ButtonType buttonNo = new ButtonType("No");
+
+            alertAI.getButtonTypes().setAll(buttonYes, buttonNo);
+
+            Optional<ButtonType> resultAI = alertAI.showAndWait();
+            if (resultAI.get() == buttonYes) {
+                againstAi = true;
+            } else if (resultAI.get() == buttonNo) {
+                againstAi = false;
+            } else {
+                showText("Ok continue!");
+                return;
+            }
+
+            if (againstAi == false) {
+                TextInputDialog dialog2 = new TextInputDialog("Player 2");
+                dialog2.setTitle("Player 2 name");
+                dialog2.setHeaderText("Enter name");
+                dialog2.setContentText("Please enter next players name:");
+
+// Traditional way to get the response value.
+                Optional<String> resultName = dialog2.showAndWait();
+                if (resultName.isPresent()) {
+                    playerTwoName = resultName.get();
+                } else {
+                    showText("Ok continue!");
+                    return;
+                }
+            }
+            initGameUIModell(playerIsBlack, playerOneName, playerTwoName);
+            isGameRunning = true;
+        }
+
+        public void positionClicked(Event event) {
+            ImageView selectPos = (ImageView) event.getSource();
+            gameSession.setSelectedPosition(convertIDtoString(selectPos.getId()));
+            movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
+        }
+
+        public void initGameUIModell(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
+
+            gameSession = new Game(isPlayerOneBlack, playerOneName, playerTwoName);
+            //initiate gamevariables
+            String[] stringPos = {
+                "A7", "D7", "G7",
+                "A4", "G4",
+                "A1", "D1", "G1",
+                "B6", "D6", "F6",
+                "B4", "F4",
+                "B2", "D2", "F2",
+                "C5", "D5", "E5",
+                "C4", "E4",
+                "C3", "D3", "E4"
+            };
+            gameRunning = false;
+            isPositionClickable = false;
+            isPlayerOnePiecesClickable = false;
+            isPlayerTwoPiecesClickable = false;
+            isPositionHoverable = false;
+
+            //Gameboard positions
+            File filePosition = new File("src/Images/transparentPos.png");
+            Image positionImage = new Image(filePosition.toURI().toString());
+            Group groupOfPos = new Group();
+
+            positionImages = new ArrayList<ImageView>();
+            int positionIndex = 0;
+
+            for (int j = 0;
+                    j < 3; j++) { //outer quadrant
+                for (int i = 0; i < 3; i++) { //24 is number of positions
+                    if (!(i == 1 && j == 1)) {
+                        ImageView positionView = new ImageView(positionImage);
+                        positionView.setId("#" + positionIndex);
+                        positionIndex++;
+                        positionView.setFitHeight(60); //set size of pieces
+                        positionView.setFitWidth(60);
+                        positionView.setPreserveRatio(true);
+                        positionView.setSmooth(true);
+                        positionView.setLayoutX(-8 + (i * 265));
+                        positionView.setLayoutY(25 + (j * 265));
+                        positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
+                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
+                        positionImages.add(positionView);
+                        groupOfPos.getChildren().add(positionView);
+                    }
+                }
+            }
+
+            for (int j = 0;
+                    j < 3; j++) { //middle quadrant
+                for (int i = 0; i < 3; i++) { //24 is number of positions
+                    if (!(i == 1 && j == 1)) {
+                        ImageView positionView = new ImageView(positionImage);
+                        positionView.setId("#" + positionIndex);
+                        positionIndex++;
+                        positionView.setFitHeight(60); //set size of pieces
+                        positionView.setFitWidth(60);
+                        positionView.setPreserveRatio(true);
+                        positionView.setSmooth(true);
+                        positionView.setLayoutX(77 + (i * 180));
+                        positionView.setLayoutY(110 + (j * 180));
+                        positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
+                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
+                        positionImages.add(positionView);
+                        groupOfPos.getChildren().add(positionView);
+                    }
+                }
+            }
+
+            for (int j = 0;
+                    j < 3; j++) { //inner quadrant
+                for (int i = 0; i < 3; i++) { //24 is number of positions
+                    if (!(i == 1 && j == 1)) {
+                        ImageView positionView = new ImageView(positionImage);
+                        positionView.setId("#" + positionIndex);
+                        positionIndex++;
+                        positionView.setFitHeight(60); //set size of pieces
+                        positionView.setFitWidth(60);
+                        positionView.setPreserveRatio(true);
+                        positionView.setSmooth(true);
+                        positionView.setLayoutX(157 + (i * 100));
+                        positionView.setLayoutY(190 + (j * 100));
+                        positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
+                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
+                        positionImages.add(positionView);
+                        groupOfPos.getChildren().add(positionView);
+                    }
+                }
+            }
+
+            //init Position value to positionviewItems
+            for (int i = 0; i < 24; i++) {
+                positionImages.get(i).setId(positionImages.get(i).getId() + stringPos[i]);
+            }
+
+            //Pieces and players name
+            Image imageWhite = initImagePieceWhite();
+            Image imageBlack = initImagePieceBlack();
+            Image imageArrow = initImageArrow();
+
+            whitePieces = new ArrayList<ImageView>();
+            blackPieces = new ArrayList<ImageView>();
+
+            for (int i = 0;
+                    i < 9; i++) {
+                ImageView whitePiece = new ImageView(imageWhite);
+                ImageView blackPiece = new ImageView(imageBlack);
+                whitePiece.setFitHeight(50); //set size of pieces
+                whitePiece.setFitWidth(50);
+                blackPiece.setFitHeight(50);
+                blackPiece.setFitWidth(50);
+                blackPiece.setPreserveRatio(true);
+                blackPiece.setSmooth(true);
+                whitePiece.setPreserveRatio(true);
+                whitePiece.setSmooth(true);
+
+                whitePiece.setId("" + i);
+                blackPiece.setId("" + (i + 9));
+                whitePiece.setOnMouseClicked(new pieceClicked());
+                blackPiece.setOnMouseClicked(new pieceClicked());
+
+                whitePieces.add(whitePiece);
+                blackPieces.add(blackPiece);
+            }
+
+            arrowImage = new ImageView(imageArrow);
+            arrowImage.setFitHeight(80);
+            arrowImage.setFitWidth(80);
+            arrowImage.setPreserveRatio(true);
+            arrowImage.setSmooth(true);
+
+            GridPane grid = new GridPane();
+
+            grid.setHgap(10); //horizontal gap in pixels => that's what you are asking for
+            grid.setVgap(10); //vertical gap in pixels
+            grid.setPadding(new Insets(10, 10, 10, 10));
+
+            playerOneLbl = new Label(gameSession.getPlayerOneName());
+            playerTwoLbl = new Label(gameSession.getPlayerTwoName());
+
+            addPiecesToGrid(grid, whitePieces, 2);
+            grid.add(playerOneLbl, 0, 1, 4, 1); //spans over hole row
+            addPiecesToGrid(grid, blackPieces, 18);
+            grid.add(playerTwoLbl, 0, 17, 4, 1);
+
+            File fileBack = new File("src/Images/backgroundImage.jpg");
+            loadBackgroundImage(mainPane, fileBack);
+
+            mainPane.setRight(grid);
+            arrowImage.setLayoutX(675);
+            arrowImage.setLayoutY(277);
+            mainPane.getChildren().add(arrowImage);
+            mainPane.getChildren().add(groupOfPos);
         }
     }
 
-    private void newWindow(Pane pane) {
+    private void newWindow(Pane pane, String title, int width, int height) {
         Stage stage = new Stage();
-        stage.setScene(new Scene(pane, 805, 590));
+        stage.setScene(new Scene(pane, width, height));
         stage.setResizable(false);
-        stage.setTitle("About");
+        stage.setTitle(title);
         stage.show();
-    }
-
-    private void showText(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("About");
-        alert.setContentText(message);
-        alert.show();
     }
 
     /**
@@ -493,6 +726,46 @@ public class NineMenMorris extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void initStartWindow(Stage primaryStage) {
+        controller = new Controller(gameSession);
+        //Menu
+        MenuBar menuBar = new MenuBar();
+        Menu gameMenu = new Menu("Game");
+        Menu helpMenu = new Menu("Help");
+
+        //MenuItems
+        MenuItem restartGameItem = new MenuItem("New Game"); //alert AI or player?
+        MenuItem regretMoveItem = new MenuItem("Highscore"); //need a array of moves in game
+        MenuItem aboutItem = new MenuItem("About");
+        MenuItem rulesItem = new MenuItem("Rules");
+
+        //Connecting items to eventhandler
+        newGameHandles newGame = new newGameHandles();
+        restartGameItem.setOnAction(newGame);
+        itemAboutHandles itemAbout = new itemAboutHandles();
+        aboutItem.setOnAction(itemAbout);
+        itemRulesHandles itemRules = new itemRulesHandles();
+        rulesItem.setOnAction(itemRules);
+
+        //Connect Menu and items
+        gameMenu.getItems().addAll(restartGameItem, regretMoveItem);
+        helpMenu.getItems().addAll(aboutItem, rulesItem);
+        menuBar.getMenus().addAll(gameMenu, helpMenu);
+
+        // FlowPane bottomPane = new FlowPane();
+        // bottomPane.getChildren().addAll(newGamebtn, regretLastMovebtn);
+        //Create a game players and get their names and position..
+        //mainPane.setStyle("-fx-background-color: Black");
+        mainPane = new BorderPane();
+        mainPane.setTop(menuBar);
+
+        Scene scene = new Scene(mainPane, 805, 590);
+        primaryStage.setTitle("Nine Men Morris!");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
     }
 
 }

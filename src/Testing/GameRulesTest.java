@@ -51,7 +51,7 @@ public class GameRulesTest {
         gameBoard.addPiece(pieceForMill2);
         gameBoard.addPiece(selectedPiece);
 
-        ArrayList<Position> options = gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece);
+        ArrayList<String> options = gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece);
 
         for (int i = 0; i < options.size(); i++) {
             System.out.println(options.get(i) + " - ");

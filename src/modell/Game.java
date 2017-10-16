@@ -22,16 +22,28 @@ public class Game {
     private GameRules gameRules;
     private boolean placeStage;
 
-    
+    private Piece selectedPiece;
+    private Position selectedPos;
+    //private GameState gameState;
+
     public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
         moves = new ArrayList<>();
-        playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
+        if (!isPlayerOneBlack) { //playerOne white
+            playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
+            playerTwo = new HumanPlayer(playerTwoName, !isPlayerOneBlack);
+        } else {
+            playerOne = new HumanPlayer(playerTwoName, isPlayerOneBlack);
+            playerTwo = new HumanPlayer(playerOneName, !isPlayerOneBlack);
+        }
         playerOneTurn = !isPlayerOneBlack; //Player with white start
-        playerTwo = new HumanPlayer(playerTwoName, !isPlayerOneBlack);
         gameBoard = new GameBoard();
         placeStage = true;
         gameRunning = true;
         gameRules = new GameRules();
+
+        selectedPiece = new Piece();
+        selectedPos = Position.NOPOS;
+        // gameState = new GameState();
     }
 
     /**
@@ -47,8 +59,58 @@ public class Game {
         gameRunning = true;
     }
 
+    public void setSelectedPiece(int pieceId) {
+        selectedPiece = getPieceInList(pieceId);
+    }
+
+    public String getSelectedPieceID() {
+        return Integer.toString(selectedPiece.getId());
+    }
+
+    public Piece getSelectedPiece() {
+        return selectedPiece;
+    }
+
+    public void setSelectedPosition(String pos) {
+        selectedPos = Position.valueOf(pos);
+    }
+
+    public String getSelectedPosition() {
+        return selectedPos.name();
+    }
+
+    public int getState() {
+        //return gameState.getState();
+        return 1;
+    }
+
+    private Piece getPieceInList(int idNumber) {
+        ArrayList<Piece> boardPieces = gameBoard.getPieces();
+        ArrayList<Piece> playerOnePieces = playerOne.getPieces();
+        ArrayList<Piece> playerTwoPieces = playerTwo.getPieces();
+
+        for (Piece p : boardPieces) {
+            if (p.isIdEqual(idNumber)) {
+                return p;
+            }
+        }
+
+        for (Piece p : playerOnePieces) {
+            if (p.isIdEqual(idNumber)) {
+                return p;
+            }
+        }
+
+        for (Piece p : playerTwoPieces) {
+            if (p.isIdEqual(idNumber)) {
+                return p;
+            }
+        }
+        return null; //needs to handle this
+    }
+
     /**
-     * 
+     *
      * @return if game is still running
      */
     public boolean isGameRunning() {
@@ -63,33 +125,37 @@ public class Game {
     }
 
     /**
-     * 
-     * @return empty positions in gameBoard
-     */
-    public ArrayList<Position> getFreePos() {
-        return (ArrayList<Position>) gameBoard.getEmptyPos().clone();
-    }
-
-    /**
-     * 
+     *
      * @param selectedPiece
      * @return possible moves for selected piece
      */
-    public ArrayList<Position> getOption(Piece selectedPiece) {
-        return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece);
+    public ArrayList<String> getOption(Piece selectedPiece) {
+        if (placeStage == true) {
+            return (ArrayList<String>) gameBoard.getEmptyPosString().clone();
+        } else {
+            return gameRules.getOptionMove(gameBoard.getEmptyPos(), selectedPiece);
+        }
     }
-    
+
     /**
-     * 
+     *
      * @param playerPieces
      * @return selected players pieces
      */
     public ArrayList<Piece> getPlayerPieces(HumanPlayer playerPieces) {
         return playerPieces.getPieces();
     }
-    
+
+    public String getPlayerOneName() {
+        return playerOne.getName();
+    }
+
+    public String getPlayerTwoName() {
+        return playerTwo.getName();
+    }
+
     /**
-     * 
+     *
      * @param player
      * @return Selected players pieces that's been placed on the board
      */
@@ -98,7 +164,7 @@ public class Game {
     }
 
     /**
-     * 
+     *
      * @return All pieces that's been placed on the board
      */
     public ArrayList<Piece> getGameBoardPieces() {
@@ -106,7 +172,7 @@ public class Game {
     }
 
     /**
-     * 
+     *
      * @return the player whose turn it is
      */
     public HumanPlayer getCurrentPlayer() {
@@ -118,7 +184,7 @@ public class Game {
     }
 
     /**
-     * 
+     *
      * @return true if not all pieces has been placed on the board
      */
     public boolean getPlaceStage() {
@@ -126,7 +192,7 @@ public class Game {
     }
 
     /**
-     * 
+     *
      * @return true if its player ones turn otherwise false
      */
     public boolean getPlayerOneTurn() {
@@ -135,28 +201,30 @@ public class Game {
 
     /**
      * Place a new piece with selected id at selected position in form of string
+     *
      * @param pieceId
-     * @param newPos 
+     * @param newPos
      */
     public void placePiece(int pieceId, String newPos) {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
         updatePlaceStage();
     }
-    
+
     /**
      * checks if players have exited the placing phase
      */
     private void updatePlaceStage() {
-        if (playerOne.getNoOfPieces() + playerTwo.getNoOfPieces() == 0)
+        if (playerOne.getNoOfPieces() + playerTwo.getNoOfPieces() == 0) {
             placeStage = false;
-        else {
+        } else {
             placeStage = true;
         }
     }
 
     /**
      * removes selected piece from the game board
-     * @param idNumber 
+     *
+     * @param idNumber
      */
     public void removePiece(int idNumber) {
         gameBoard.removePiece(idNumber);
@@ -164,19 +232,22 @@ public class Game {
 
     /**
      * Checks if the currently selected player has won the game
+     *
      * @param otherPlayer
      * @param boardPieces
      * @param freePos
      * @return true if current player has won
      */
-    public boolean haveCurrentPlayerWon(HumanPlayer otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) {
+    public boolean haveCurrentPlayerWon() {
         return gameRules.haveCurrentPlayerWon(getOtherPlayer(), gameBoard.getPieces(), gameBoard.getEmptyPos());
     }
 
     /**
-     * Place a new piece with selected id at selected position in form of Position
+     * Place a new piece with selected id at selected position in form of
+     * Position
+     *
      * @param pieceId
-     * @param newPos 
+     * @param newPos
      */
     public void placePiece(int pieceId, Position newPos) {
         gameBoard.addPiece(getCurrentPlayer().placePiece(pieceId, newPos));
@@ -184,6 +255,7 @@ public class Game {
 
     /**
      * Checks if a mill has occurred with the last move
+     *
      * @param selectedPiece
      * @param gameBoardPieces
      * @return true if new mill's formed
@@ -193,7 +265,7 @@ public class Game {
     }
 
     /**
-     * 
+     *
      * @return player whose turn it is not
      */
     public HumanPlayer getOtherPlayer() {
@@ -205,7 +277,7 @@ public class Game {
     }
 
     /**
-     * 
+     *
      * @return pieces of the player whose turn it is not
      */
     public ArrayList<Piece> getOtherPlayerPieces() {
@@ -214,8 +286,9 @@ public class Game {
 
     /**
      * Moves selected piece to the selected new position
+     *
      * @param pieceId
-     * @param newPos 
+     * @param newPos
      */
     public void movePiece(int pieceId, Position newPos) {
         gameBoard.movePiece(pieceId, newPos);
@@ -227,9 +300,9 @@ public class Game {
     public void changePlayerTurn() {
         playerOneTurn = !playerOneTurn;
     }
-    
+
     /**
-     * 
+     *
      * @return a string with information for player one, two and the gameBoard
      */
     public String toString() {
