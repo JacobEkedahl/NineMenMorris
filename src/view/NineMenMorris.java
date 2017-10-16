@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Random;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PathTransition;
 import javafx.application.Application;
@@ -55,6 +56,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import modell.Game;
+import modell.Position;
 
 /**
  *
@@ -93,6 +95,46 @@ public class NineMenMorris extends Application {
     public void start(Stage primaryStage) {
         initStartWindow(primaryStage);
         isGameRunning = false;
+    }
+
+    private void initStartWindow(Stage primaryStage) {
+        controller = new Controller(gameSession);
+        //Menu
+        MenuBar menuBar = new MenuBar();
+        Menu gameMenu = new Menu("Game");
+        Menu helpMenu = new Menu("Help");
+
+        //MenuItems
+        MenuItem restartGameItem = new MenuItem("New Game"); //alert AI or player?
+        MenuItem regretMoveItem = new MenuItem("Highscore"); //need a array of moves in game
+        MenuItem aboutItem = new MenuItem("About");
+        MenuItem rulesItem = new MenuItem("Rules");
+
+        //Connecting items to eventhandler
+        newGameHandles newGame = new newGameHandles();
+        restartGameItem.setOnAction(newGame);
+        itemAboutHandles itemAbout = new itemAboutHandles();
+        aboutItem.setOnAction(itemAbout);
+        itemRulesHandles itemRules = new itemRulesHandles();
+        rulesItem.setOnAction(itemRules);
+
+        //Connect Menu and items
+        gameMenu.getItems().addAll(restartGameItem, regretMoveItem);
+        helpMenu.getItems().addAll(aboutItem, rulesItem);
+        menuBar.getMenus().addAll(gameMenu, helpMenu);
+
+        // FlowPane bottomPane = new FlowPane();
+        // bottomPane.getChildren().addAll(newGamebtn, regretLastMovebtn);
+        //Create a game players and get their names and position..
+        //mainPane.setStyle("-fx-background-color: Black");
+        mainPane = new BorderPane();
+        mainPane.setTop(menuBar);
+
+        Scene scene = new Scene(mainPane, 805, 590);
+        primaryStage.setTitle("Nine Men Morris!");
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
     }
 
     private void addPositionsToBoard(BorderPane mainPane) {
@@ -185,23 +227,33 @@ public class NineMenMorris extends Application {
 
     public void movePiece(String pieceId, String pos) {
         ImageView image = getPieceByID(pieceId);
+
         if (image == null) {
             showText("Cant select your opponents pieces!");
             return;
         }
-        ImageView positionImg = getPositionByID(pos);
 
         double x = image.getLayoutX();
         double y = image.getLayoutY();
-        double dx = positionImg.getLayoutX() - 680 - x;
-        double dy = positionImg.getLayoutY() + 105 - y;
-        x -= x;
-        y -= y;
 
-        System.out.println("dx: " + dx + " - dy:" + dy);
-        System.out.println("x: " + x + " y: " + y);
-
-        Line line = new Line(x + 25, y + 25, dx + 100, dy - 100);
+        // System.out.println("dx: " + dx + " - dy:" + dy);
+        // System.out.println("x: " + x + " y: " + y);
+        Line line;
+        if (pos.equals("NOPOS")) {
+            Random rand = new Random();
+            int xValue = 800 * (rand.nextInt(4) + 1);
+            int yValue = 700 * (rand.nextInt(5) + 1);
+            x -= x;
+            y -= y;
+            line = new Line(x + 25, y + 25, xValue, yValue);
+        } else {
+            ImageView positionImg = getPositionByID(pos);
+            double dx = positionImg.getLayoutX() - 680 - x;
+            double dy = positionImg.getLayoutY() + 105 - y;
+            x -= x;
+            y -= y;
+            line = new Line(x + 25, y + 25, dx + 100, dy - 100);
+        }
 
         PathTransition transition = new PathTransition();
         transition.setNode(image);
@@ -209,6 +261,7 @@ public class NineMenMorris extends Application {
         transition.setPath(line);
         transition.setCycleCount(1);
         transition.play();
+
     }
 
     private ImageView getPositionByID(String id) {
@@ -231,10 +284,10 @@ public class NineMenMorris extends Application {
     }
 
     private ImageView getPieceByID(String id) {
-        if (gameSession.getCurrentPlayer().isBlack()) {
-            for (int i = 9; i < blackPieces.size() + 9; i++) {
+        if (Integer.parseInt(id) > 8) {
+            for (int i = 0; i < blackPieces.size(); i++) {
                 if (blackPieces.get(i).getId().equals(id)) {
-                    return blackPieces.get(10);
+                    return blackPieces.get(i);
                 }
             }
         } else {
@@ -259,8 +312,8 @@ public class NineMenMorris extends Application {
         @Override
         public void handle(MouseEvent event) {
             controller.selectPiece(event);
-            updateTurnUI();
-            gameSession.changePlayerTurn();
+            //updateTurnUI();
+            //gameSession.changePlayerTurn();
         }
     }
 
@@ -368,17 +421,18 @@ public class NineMenMorris extends Application {
         }
 
         public void positionEnter(Event event) {
-            ArrayList<String> hovPos = gameSession.getOption(gameSession.getSelectedPiece());
-            ImageView targetView = (ImageView) event.getSource();
-            String targetPos = convertIDtoString(targetView.getId());
+            if (gameSession.getState() == 1) {
+                ImageView targetView = (ImageView) event.getSource();
+                String targetPos = convertIDtoString(targetView.getId());
 
-            for (int i = 0; i < positionImages.size(); i++) {
-                if (targetView.getId().equals(positionImages.get(i).getId()) && hovPos.contains(targetPos)) {
-                    File filePosition = new File("src/Images/hoverPosition.png");
-                    Image positionImage = new Image(filePosition.toURI().toString());
+                for (int i = 0; i < positionImages.size(); i++) {
+                    if (targetView.getId().equals(positionImages.get(i).getId()) && hovarablePositions.contains(targetPos)) {
+                        File filePosition = new File("src/Images/hoverPosition.png");
+                        Image positionImage = new Image(filePosition.toURI().toString());
 
-                    positionImages.get(i).setImage(positionImage);
-
+                        positionImages.get(i).setImage(positionImage);
+                        return;
+                    }
                 }
             }
         }
@@ -390,15 +444,39 @@ public class NineMenMorris extends Application {
             ImageView tempPiece = new ImageView();
             tempPiece = (ImageView) event.getSource();
 
-            if (Integer.parseInt(tempPiece.getId()) < 9) { //if gamestate 
-                changeImageInList(whitePieces, initImagePieceWhiteMarked(), tempPiece.getId());
-                //changeState
-            } else {
-                changeImageInList(blackPieces, initImagePieceBlackMarked(), tempPiece.getId());
+            System.out.println(gameSession.getState());
+            if (gameSession.getState() == 0 || gameSession.getState() == 1) {
+                //first stage
+                if (gameSession.getCurrentPlayer().isBlack()) {
+                    if (Integer.parseInt(tempPiece.getId()) > 8) {
+                        gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId())); //modell change
+                        changeImageInList(blackPieces, initImagePieceBlackMarked(), tempPiece.getId()); //UI change
+                    }
+                } else {
+                    if (Integer.parseInt(tempPiece.getId()) < 9) {
+                        gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId()));
+                        changeImageInList(whitePieces, initImagePieceWhiteMarked(), tempPiece.getId());
+                        hovarablePositions = gameSession.getOption(gameSession.getSelectedPiece());
+                    }
+                }
+                if (gameSession.getState() == 0) {
+                    gameSession.next();
+                }
+            } else if (gameSession.getState() == 2) {
+                if (!gameSession.getCurrentPlayer().isBlack()) {
+                    if (Integer.parseInt(tempPiece.getId()) > 8) {
+                        gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId())); //modell change
+                    }
+                } else {
+                    gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId()));
+                }
+                System.out.println(tempPiece.getId());
+                movePiece(tempPiece.getId(), "NOPOS");
+                gameSession.removePiece(Integer.parseInt(tempPiece.getId()));
+                //remove piece
+                //check if player has won
+                gameSession.next();
             }
-
-            gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId()));
-
         }
 
         public void showAbout() {
@@ -458,6 +536,7 @@ public class NineMenMorris extends Application {
             String playerTwoName = "Player 2";
             boolean againstAi = false;
             boolean playerIsBlack = false;
+            hovarablePositions = new ArrayList<String>();
 
             if (isGameRunning) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -487,7 +566,6 @@ public class NineMenMorris extends Application {
                 showText("Ok continue!");
                 return;
             }
-            System.out.println(playerOneName);
 
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Choose color");
@@ -508,7 +586,6 @@ public class NineMenMorris extends Application {
                 showText("Ok continue!");
                 return;
             }
-            System.out.println(playerIsBlack);
 
             Alert alertAI = new Alert(AlertType.CONFIRMATION);
             alertAI.setTitle("Choose opponent");
@@ -550,9 +627,35 @@ public class NineMenMorris extends Application {
         }
 
         public void positionClicked(Event event) {
-            ImageView selectPos = (ImageView) event.getSource();
-            gameSession.setSelectedPosition(convertIDtoString(selectPos.getId()));
-            movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
+            if (gameSession.getState() == 1) {
+                ImageView selectPos = (ImageView) event.getSource();
+                for (int i = 0; i < hovarablePositions.size(); i++) {
+                    if (convertIDtoString(selectPos.getId()).equals(hovarablePositions.get(i))) {
+                        gameSession.setSelectedPosition(convertIDtoString(selectPos.getId()));
+                        movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
+                        if (gameSession.getPlaceStage()) {
+                            gameSession.placePiece(Integer.parseInt(gameSession.getSelectedPieceID()), gameSession.getSelectedPosition());
+                        } else {
+                            gameSession.movePiece(Integer.parseInt(gameSession.getSelectedPieceID()), gameSession.getSelectedPosition());
+                            if (gameSession.haveCurrentPlayerWon()) {
+                                System.out.println("Game over");
+                                gameSession.over();
+                                gameSession.gameOver();
+                            }
+                        }
+
+                        if (gameSession.isMill(gameSession.getSelectedPiece(), gameSession.getGameBoardPieces())) {
+                            gameSession.next();
+                            System.out.println("Mill!");
+                        } else {
+                            gameSession.again();
+                            updateTurnUI();
+                        }
+                    }
+                }
+
+            }
+
         }
 
         public void initGameUIModell(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
@@ -568,7 +671,7 @@ public class NineMenMorris extends Application {
                 "B2", "D2", "F2",
                 "C5", "D5", "E5",
                 "C4", "E4",
-                "C3", "D3", "E4"
+                "C3", "D3", "E3"
             };
             gameRunning = false;
             isPositionClickable = false;
@@ -599,6 +702,7 @@ public class NineMenMorris extends Application {
                         positionView.setLayoutY(25 + (j * 265));
                         positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
                         positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
+                        positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
                         positionImages.add(positionView);
                         groupOfPos.getChildren().add(positionView);
                     }
@@ -620,6 +724,7 @@ public class NineMenMorris extends Application {
                         positionView.setLayoutY(110 + (j * 180));
                         positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
                         positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
+                        positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
                         positionImages.add(positionView);
                         groupOfPos.getChildren().add(positionView);
                     }
@@ -641,6 +746,7 @@ public class NineMenMorris extends Application {
                         positionView.setLayoutY(190 + (j * 100));
                         positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
                         positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
+                        positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
                         positionImages.add(positionView);
                         groupOfPos.getChildren().add(positionView);
                     }
@@ -727,45 +833,4 @@ public class NineMenMorris extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
-    private void initStartWindow(Stage primaryStage) {
-        controller = new Controller(gameSession);
-        //Menu
-        MenuBar menuBar = new MenuBar();
-        Menu gameMenu = new Menu("Game");
-        Menu helpMenu = new Menu("Help");
-
-        //MenuItems
-        MenuItem restartGameItem = new MenuItem("New Game"); //alert AI or player?
-        MenuItem regretMoveItem = new MenuItem("Highscore"); //need a array of moves in game
-        MenuItem aboutItem = new MenuItem("About");
-        MenuItem rulesItem = new MenuItem("Rules");
-
-        //Connecting items to eventhandler
-        newGameHandles newGame = new newGameHandles();
-        restartGameItem.setOnAction(newGame);
-        itemAboutHandles itemAbout = new itemAboutHandles();
-        aboutItem.setOnAction(itemAbout);
-        itemRulesHandles itemRules = new itemRulesHandles();
-        rulesItem.setOnAction(itemRules);
-
-        //Connect Menu and items
-        gameMenu.getItems().addAll(restartGameItem, regretMoveItem);
-        helpMenu.getItems().addAll(aboutItem, rulesItem);
-        menuBar.getMenus().addAll(gameMenu, helpMenu);
-
-        // FlowPane bottomPane = new FlowPane();
-        // bottomPane.getChildren().addAll(newGamebtn, regretLastMovebtn);
-        //Create a game players and get their names and position..
-        //mainPane.setStyle("-fx-background-color: Black");
-        mainPane = new BorderPane();
-        mainPane.setTop(menuBar);
-
-        Scene scene = new Scene(mainPane, 805, 590);
-        primaryStage.setTitle("Nine Men Morris!");
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.show();
-    }
-
 }

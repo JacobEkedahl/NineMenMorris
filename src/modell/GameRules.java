@@ -81,7 +81,7 @@ public class GameRules {
             "#G4", "G1", "G7",
             "#G4", "F4", "E4",
             "#G7", "G1", "G4",
-            "#G7", "D7", "A7",};
+            "#G7", "D7", "A7#"};
         return millString;
     }
 
@@ -191,6 +191,16 @@ public class GameRules {
         }
         return false;
     }
+    
+    public ArrayList<String> piecesAbleToRemove(ArrayList<Piece> boardPieces, ArrayList<Piece> playerPiece) {
+        ArrayList<String> piecesToRemove = new ArrayList<String>();
+        for (Piece p: boardPieces) {
+            if (p.isBlack() == playerPiece.get(0).isBlack()) {
+                piecesToRemove.add(Integer.toString(p.getId()));
+            }
+        }
+        return (ArrayList<String>) piecesToRemove;
+    }
 
     /**
      * Checks it a piece is places on a certain position and if its of a 
@@ -218,7 +228,7 @@ public class GameRules {
     public boolean haveCurrentPlayerWon(HumanPlayer otherPlayer, ArrayList<Piece> boardPieces, ArrayList<Position> freePos) { //need boardPieces update both boardPieces and freePos placeStage
         int totalPlayerPieces = 0;
         totalPlayerPieces += otherPlayer.getNoOfPieces();
-        System.out.println("totalPlayerPieces: " + totalPlayerPieces);
+        //System.out.println("totalPlayerPieces: " + totalPlayerPieces);
         totalPlayerPieces += getListPiecesOfColor(otherPlayer.isBlack(), boardPieces).size();
 
         return totalPlayerPieces < 3; //|| haveOtherNoMoves(otherPlayer, boardPieces, freePos)
@@ -275,9 +285,6 @@ public class GameRules {
         boardPieces = gameBoardUpdate;
         String piecePos = posToString(movedPiece.getPos());
         boolean pieceBlack = movedPiece.isBlack();
-
-        System.out.println("Selected piece pos" + piecePos);
-
         ArrayList<String> millPos = new ArrayList<>();
 
         for (int i = 0; i < millCombinations.length; i++) {

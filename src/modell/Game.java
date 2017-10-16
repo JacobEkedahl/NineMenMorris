@@ -24,7 +24,7 @@ public class Game {
 
     private Piece selectedPiece;
     private Position selectedPos;
-    //private GameState gameState;
+    private GameState gameState;
 
     public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
         moves = new ArrayList<>();
@@ -43,7 +43,7 @@ public class Game {
 
         selectedPiece = new Piece();
         selectedPos = Position.NOPOS;
-        // gameState = new GameState();
+        gameState = new GameState();
     }
 
     /**
@@ -80,8 +80,20 @@ public class Game {
     }
 
     public int getState() {
-        //return gameState.getState();
-        return 1;
+        return gameState.getState();
+    }
+
+    public void next() {
+        gameState.next();
+    }
+
+    public void again() {
+        gameState.zero();
+        playerOneTurn = !playerOneTurn;
+    }
+
+    public void over() {
+        gameState.over();
     }
 
     private Piece getPieceInList(int idNumber) {
@@ -275,6 +287,15 @@ public class Game {
             return playerOne;
         }
     }
+    
+    public Position getNoPos() {
+        Position p = Position.NOPOS;
+        return p;
+    }
+    
+    public ArrayList<String> piecesToRemove() {
+        return gameRules.piecesAbleToRemove(gameBoard.getPieces(), getOtherPlayerPieces());
+    }
 
     /**
      *
@@ -292,6 +313,10 @@ public class Game {
      */
     public void movePiece(int pieceId, Position newPos) {
         gameBoard.movePiece(pieceId, newPos);
+    }
+
+    public void movePiece(int pieceId, String newPos) {
+        gameBoard.movePiece(pieceId, Position.valueOf(newPos));
     }
 
     /**
