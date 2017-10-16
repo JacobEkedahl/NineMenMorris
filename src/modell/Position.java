@@ -18,12 +18,4 @@ public enum Position {
     F2, F4, F6,
     G1, G4, G7,
     NOPOS;
-
-    /**
-     * 
-     * @return all positions in the enumeration
-     */
-    public int getNoPosition() {
-        return Position.values().length;
-    }
 }

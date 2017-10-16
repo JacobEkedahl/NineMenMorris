@@ -26,7 +26,7 @@ public class HighScore {
     private ArrayList<Winner> winners;
 
     public HighScore() {
-        fileName = new String(System.getProperty("user.dir") + "highScore.ser");
+        fileName = new String(System.getProperty("user.dir") + "/highScore.ser");
         winners = new ArrayList();
         readFromFile();
     }
@@ -58,6 +58,8 @@ public class HighScore {
         File file = new File(fileName);
         if (!file.exists()) {
             file.createNewFile();
+        } else {
+            System.out.println("Hello");
         }
         System.out.println("written to file " + file.toString());
 

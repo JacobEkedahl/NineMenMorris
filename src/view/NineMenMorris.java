@@ -201,7 +201,7 @@ public class NineMenMorris extends Application {
         }
     }
 
-    private Image initImageArrow() {
+    public Image initImageArrow() {
         File filePiece = new File("src/Images/arrow.png");
         return new Image(filePiece.toURI().toString());
     }
@@ -329,8 +329,6 @@ public class NineMenMorris extends Application {
         @Override
         public void handle(MouseEvent event) {
             controller.selectPiece(event);
-            //updateTurnUI();
-            //gameSession.changePlayerTurn();
         }
     }
 
@@ -341,14 +339,6 @@ public class NineMenMorris extends Application {
             controller.positionClicked(event);
         }
 
-    }
-
-    private class positionExit implements EventHandler<MouseEvent> {
-
-        @Override
-        public void handle(MouseEvent event) {
-            controller.positionExit(event);
-        }
     }
 
     private class positionEnter implements EventHandler<MouseEvent> {
@@ -402,11 +392,24 @@ public class NineMenMorris extends Application {
         private Game sharedGame;
         private HighScore highScore;
 
+        /**
+         * *
+         * Creates a controller and let controller share the viewclass game A
+         * highscore is loaded, it is a .ser file
+         *
+         * @param game
+         */
         Controller(Game game) {
             sharedGame = game;
             highScore = new HighScore();
         }
 
+        /**
+         * Method called by eventhandler when user tries to see the local
+         * highscore loads highscore info into a textArea, highscore looks for
+         * other similair names and add same players score together Top 10
+         * String is generated
+         */
         public void showHighscore() {
             String highscore = "";
 
@@ -429,18 +432,29 @@ public class NineMenMorris extends Application {
             newWindow(backGroundPane, "Highscore", 805, 590);
         }
 
+        /**
+         * returns a string with top 10 players names and their total result in
+         * order
+         *
+         * @return String
+         */
         public String getHighScoreTopTen() {
             return highScore.toString();
         }
 
+        /**
+         * If someone wins they will be added to highscore
+         *
+         * @param playerName
+         */
         public void addToHighScore(String playerName) {
             highScore.addToHighScore(playerName);
         }
 
-        public void positionExit(Event event) {
-
-        }
-
+        /**
+         * Make those positions that have been hovered over when player removes
+         * opponents piece visible again
+         */
         public void unMask() {
             for (ImageView view : unvisible) {
                 view.setVisible(true);
@@ -448,18 +462,30 @@ public class NineMenMorris extends Application {
             unvisible.clear();
         }
 
+        /**
+         * Hides all positions make only buttons clickable
+         */
         public void MaskAll() {
             for (ImageView view : positionImages) {
                 view.setVisible(false);
             }
         }
 
+        /**
+         * Makes all positions clickable (for player to place/move a piece)
+         */
         public void unMaskAll() {
             for (ImageView view : positionImages) {
                 view.setVisible(true);
             }
         }
 
+        /**
+         * When player is going to remove a piece, this function hides all
+         * position when player hovers over positions.
+         *
+         * @param event
+         */
         public void positionEnter(Event event) {
             hovarablePositions = gameSession.getFreePos();
             ImageView targetView = (ImageView) event.getSource();
@@ -470,9 +496,15 @@ public class NineMenMorris extends Application {
             }
         }
 
+        /**
+         * Private method for the gameLooplogic. This method handles when player
+         * click on position and it is the beginning, placingphase of the game.
+         * state = 0, choose a piece state = 1, chose a position to move/place
+         * the selected piece on state = 2, player has a mill
+         *
+         * @param event
+         */
         private void positionStage(Event event) {
-            System.out.println("move from ui");
-
             ImageView selectPos = (ImageView) event.getSource();
             System.out.println(selectPos);
             hovarablePositions = gameSession.getFreePos();
@@ -487,11 +519,6 @@ public class NineMenMorris extends Application {
 
                             System.out.println("Piece moved to :" + gameSession.getSelectedPosition());
                             gameSession.movePiece(Integer.parseInt(gameSession.getSelectedPieceID()), gameSession.getSelectedPosition());
-                            if (gameSession.haveCurrentPlayerWon()) {
-                                System.out.println("Game over");
-                                gameSession.over();
-                                gameSession.gameOver();
-                            }
                         }
 
                         if (gameSession.isMill(gameSession.getSelectedPiece(), gameSession.getGameBoardPieces())) {
@@ -511,16 +538,30 @@ public class NineMenMorris extends Application {
             }
         }
 
+        /**
+         * Private method for when gamestate is moving/flying and player is
+         * suppose to select a piece
+         *
+         * @param event
+         */
         private void positionClickedNormal(Event event) {
             MaskAll();
             ImageView selectPos = (ImageView) event.getSource();
 
+            System.out.println(selectPos.getId());
+            System.out.println(gameSession.getState() + " is the state");
+            System.out.println(gameSession.getSelectedPieceID() + " is piece id");
+            System.out.println();
+
+            System.out.println(gameSession.getSelectedPosition() + " is piece pos");
+
             if (gameSession.getState() == 1) {
                 hovarablePositions = gameSession.getOption(gameSession.getSelectedPiece());
-                System.out.println("The selected piece is: " + gameSession.getSelectedPieceID());
                 for (String s : hovarablePositions) {
-                    System.out.println(s + " is a possible move");
+                    System.out.print(s + " - ");
                 }
+
+                System.out.println("\n\n\n\n");
                 for (int i = 0; i < hovarablePositions.size(); i++) {
                     if (convertIDtoString(selectPos.getId()).equals(hovarablePositions.get(i))) {
                         System.out.println(selectPos.getId() + " is the id of pos"); //and is a possible move
@@ -532,21 +573,25 @@ public class NineMenMorris extends Application {
                         //do this player have a mill
                         if (gameSession.isMill(gameSession.getSelectedPiece(), gameSession.getGameBoardPieces())) {
                             gameSession.next();
-                            System.out.println("Mill!");
                         } else {
                             //has this player won
                             if (gameSession.haveCurrentPlayerWon()) {
-                                System.out.println("YayyyQ!");
+                                newWinner(gameSession.getCurrentPlayer().getName());
                             }
                             gameSession.again();
                             updateTurnUI();
                         }
-
                     }
                 }
             }
         }
 
+        /**
+         * Eventhandler connected to positions calls this function, it is
+         * gamelogic, make sure user choose the correctPiece
+         *
+         * @param event
+         */
         public void positionClicked(Event event) {
             if (gameSession.getPlaceStage()) {
                 positionStage(event);
@@ -555,6 +600,29 @@ public class NineMenMorris extends Application {
             }
         }
 
+        /**
+         * Pieces eventhandler calls this method and it handles gamelogic for
+         * ingame use.
+         *
+         * @param event
+         */
+        public void selectPiece(Event event) {
+            changeAllImagesInList(whitePieces, initImagePieceWhite()); //std image
+            changeAllImagesInList(blackPieces, initImagePieceBlack());
+
+            if (gameSession.getPlaceStage()) {
+                voidSelectPieceStage(event);
+            } else {
+                selectedPieceNormal(event);
+            }
+        }
+
+        /**
+         * Private method for the positionClicked method, it handles event when
+         * player tries to select a piece during the normal phase of the game
+         *
+         * @param event
+         */
         private void selectedPieceNormal(Event event) {
             ImageView tempPiece = new ImageView();
             tempPiece = (ImageView) event.getSource();
@@ -588,7 +656,7 @@ public class NineMenMorris extends Application {
                     gameSession.removePiece(Integer.parseInt(tempPiece.getId())); //remove from Modell
                     //Look if thisplayer has one
                     if (gameSession.haveCurrentPlayerWon()) {
-                        System.out.println("YAAAAAY!");
+                        newWinner(gameSession.getCurrentPlayer().getName());
                         //call method gaemWon with playerName as parameter in
                     }
 
@@ -599,17 +667,11 @@ public class NineMenMorris extends Application {
             }
         }
 
-        public void selectPiece(Event event) {
-            changeAllImagesInList(whitePieces, initImagePieceWhite()); //std image
-            changeAllImagesInList(blackPieces, initImagePieceBlack());
-
-            if (gameSession.getPlaceStage()) {
-                voidSelectPieceStage(event);
-            } else {
-                selectedPieceNormal(event);
-            }
-        }
-
+        /**
+         * handles logic during the placing stage of the game concerning pieces
+         *
+         * @param event
+         */
         private void voidSelectPieceStage(Event event) {
             ImageView tempPiece = new ImageView();
             tempPiece = (ImageView) event.getSource();
@@ -647,6 +709,7 @@ public class NineMenMorris extends Application {
                     gameSession.removePiece(Integer.parseInt(tempPiece.getId())); //needs to check if this piece is on gameBoard
                     //remove piece
                     //check if player has won
+
                     unMask();
                     gameSession.again();
                     updateTurnUI();
@@ -659,6 +722,21 @@ public class NineMenMorris extends Application {
             }
         }
 
+        /**
+         * Add winner to highscore, shows an alertWindow with congratiulations
+         *
+         * @param winnerName
+         */
+        private void newWinner(String winnerName) {
+            showText("Congratulations " + winnerName + "!\n" + "You've crushed your opponent!");
+            highScore.addToHighScore(winnerName);
+        }
+
+        /**
+         * Method called by eventhandler connected to the menuitem about, show
+         * an non rezizable window same size as currentWindow and info about the
+         * developer
+         */
         public void showAbout() {
             BorderPane backGroundPane = new BorderPane();
 
@@ -679,6 +757,10 @@ public class NineMenMorris extends Application {
             newWindow(backGroundPane, "About", 805, 590);
         }
 
+        /**
+         * Shows a new window, same size as original gameWindow with text that
+         * explains what this game is and how to play it
+         */
         public void showRules() {
             BorderPane backGroundPane = new BorderPane();
 
@@ -710,6 +792,10 @@ public class NineMenMorris extends Application {
             newWindow(backGroundPane, "Rules", 805, 590);
         }
 
+        /**
+         * When player wants to start a new game she/he gets to answer a couple
+         * of setupquestions
+         */
         public void initGame() {
 
             String playerOneName = "Player 1";
@@ -806,83 +892,16 @@ public class NineMenMorris extends Application {
             isGameRunning = true;
         }
 
-        public void initPositions() {
-            positionImages.clear();
-            int positionIndex = 0;
-            Image positionImage = initImagePositionTrans();
-
-            for (int j = 0;
-                    j < 3; j++) { //outer quadrant
-                for (int i = 0; i < 3; i++) { //24 is number of positions
-                    if (!(i == 1 && j == 1)) {
-                        ImageView positionView = new ImageView(positionImage);
-                        positionView.toBack();
-                        positionView.setId("#" + positionIndex);
-                        positionIndex++;
-                        positionView.setFitHeight(60); //set size of pieces
-                        positionView.setFitWidth(60);
-                        positionView.setPreserveRatio(true);
-                        positionView.setSmooth(true);
-                        positionView.setLayoutX(-8 + (i * 265));
-                        positionView.setLayoutY(25 + (j * 265));
-                        positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
-                        positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
-                        positionImages.add(positionView);
-                    }
-                }
-            }
-
-            for (int j = 0;
-                    j < 3; j++) { //middle quadrant
-                for (int i = 0; i < 3; i++) { //24 is number of positions
-                    if (!(i == 1 && j == 1)) {
-                        ImageView positionView = new ImageView(positionImage);
-                        positionView.toBack();
-                        positionView.setId("#" + positionIndex);
-                        positionIndex++;
-                        positionView.setFitHeight(60); //set size of pieces
-                        positionView.setFitWidth(60);
-                        positionView.setPreserveRatio(true);
-                        positionView.setSmooth(true);
-                        positionView.setLayoutX(77 + (i * 180));
-                        positionView.setLayoutY(110 + (j * 180));
-                        positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
-                        positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
-                        positionImages.add(positionView);
-                    }
-                }
-            }
-
-            for (int j = 0;
-                    j < 3; j++) { //inner quadrant
-                for (int i = 0; i < 3; i++) { //24 is number of positions
-                    if (!(i == 1 && j == 1)) {
-                        ImageView positionView = new ImageView(positionImage);
-                        positionView.toBack();
-                        positionView.setId("#" + positionIndex);
-                        positionIndex++;
-                        positionView.setFitHeight(60); //set size of pieces
-                        positionView.setFitWidth(60);
-                        positionView.setPreserveRatio(true);
-                        positionView.setSmooth(true);
-                        positionView.setLayoutX(157 + (i * 100));
-                        positionView.setLayoutY(190 + (j * 100));
-                        positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
-                        positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
-                        positionImages.add(positionView);
-                    }
-                }
-            }
-
-            //init Position value to positionviewItems
-            for (int i = 0; i < 24; i++) {
-                positionImages.get(i).setId(positionImages.get(i).getId() + stringPos[i]);
-            }
-        }
-
+        /**
+         * init all controllers, design for the mainGame window. Connecting some
+         * of the controlls to correct EventHandlers. Initate positions and
+         * pieces with unique idnumber that correlates with modell objects
+         * idNumber/positions.
+         *
+         * @param isPlayerOneBlack
+         * @param playerOneName
+         * @param playerTwoName
+         */
         public void initGameUIModell(boolean isPlayerOneBlack, String playerOneName, String playerTwoName) {
 
             gameSession = new Game(isPlayerOneBlack, playerOneName, playerTwoName);
@@ -926,7 +945,6 @@ public class NineMenMorris extends Application {
                         positionView.setLayoutX(-8 + (i * 265));
                         positionView.setLayoutY(25 + (j * 265));
                         positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
                         positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
                         positionImages.add(positionView);
                         groupOfPos.getChildren().add(positionView);
@@ -949,7 +967,6 @@ public class NineMenMorris extends Application {
                         positionView.setLayoutX(77 + (i * 180));
                         positionView.setLayoutY(110 + (j * 180));
                         positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
                         positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
                         positionImages.add(positionView);
                         groupOfPos.getChildren().add(positionView);
@@ -972,7 +989,6 @@ public class NineMenMorris extends Application {
                         positionView.setLayoutX(157 + (i * 100));
                         positionView.setLayoutY(190 + (j * 100));
                         positionView.addEventHandler(MouseEvent.MOUSE_ENTERED, new positionEnter());
-                        positionView.addEventHandler(MouseEvent.MOUSE_EXITED, new positionExit());
                         positionView.addEventHandler(MouseEvent.MOUSE_CLICKED, new positionClicked());
                         positionImages.add(positionView);
                         groupOfPos.getChildren().add(positionView);
@@ -1047,6 +1063,15 @@ public class NineMenMorris extends Application {
         }
     }
 
+    /**
+     * Creates a new popupwindow, mostly used by ABout, Rules, Highscore -
+     * events.
+     *
+     * @param pane
+     * @param title
+     * @param width
+     * @param height
+     */
     private void newWindow(Pane pane, String title, int width, int height) {
         Stage stage = new Stage();
         stage.setScene(new Scene(pane, width, height));

@@ -17,18 +17,18 @@ package modell;
 //if state == 0
 //getCurrentTurn
 //if black only black pieces can be selected else white
-//setselectedPiece
+//setselectedPiece -----
 //state.next
 //if state == 1
 //get a list of available pos for that piece, all pos if placingStage is true
 //only be able to hover those positions, only able to click those positons
-//choose one of those positions
+//choose one of those positions -------
 //check for mills or winning, if mill (if win = state = 10):
 //state.next
 //if state == 2
 //getOpponentsPieces on board only able to click them
-//selectAPiece, then remove piece
-//check for win, if win = state = 10
+//selectAPiece, then remove piece ------
+//check for win
 //state.zero()
 
 public class GameState {

@@ -109,7 +109,7 @@ public class GameRules {
             "#F6", "D6", "F4",
             "#G1", "D1", "G4",
             "#G4", "G1", "G7", "F4",
-            "#G7", "D7", "G4"};
+            "#G7", "D7", "G4#"};
 
         return tempString;
     }
@@ -154,22 +154,22 @@ public class GameRules {
         }
 
         if (noOfPieces == 3) {
+            System.out.println("no more then 3 pieces");
             for (Position freeP : free) {
                 freePos.add(freeP.name());
             }
             return freePos;
         }
 
-        if (currentPlayer.isBlack()) {
-            ArrayList<String> adjPos = getAdjPos(selectedPiece.getPos().name());
-            for (Position p : free) {
-                for (String s : adjPos) {
-                    if (posToString(p).equals(s) && !freePos.contains(s)) {
-                        freePos.add(p.name());
-                    }
+        ArrayList<String> adjPos = getAdjPos(selectedPiece.getPos().name());
+        for (Position p : free) {
+            for (String s : adjPos) {
+                if (posToString(p).equals(s) && !freePos.contains(s)) {
+                    freePos.add(p.name());
                 }
             }
         }
+
         return freePos;
     }
 
