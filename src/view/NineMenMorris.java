@@ -757,6 +757,7 @@ public class NineMenMorris extends Application {
         private void newWinner(String winnerName) {
             showText("Congratulations " + winnerName + "!\n" + "You've crushed your opponent!");
             highScore.addToHighScore(winnerName);
+            gameSession.reset();
         }
 
         /**

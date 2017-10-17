@@ -83,7 +83,6 @@ public class AI extends Player implements Observer {
         return placePiece(pieceId, stringToPos);
     }
 
-    @Override
     public Piece placePiece(int pieceId, Position newPos) {
         Piece pieceForBoard;
         ArrayList<Piece> pieces = new ArrayList<>();

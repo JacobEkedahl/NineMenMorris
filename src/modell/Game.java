@@ -14,7 +14,6 @@ import java.util.Observable;
  */
 public class Game extends Observable {
 
-    private ArrayList<Piece> moves;
     private boolean playerOneTurn;
     private Player playerOne;
     private Player playerTwo;
@@ -31,7 +30,6 @@ public class Game extends Observable {
 
     public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName, boolean againstAi) {
         againstAI = againstAi;
-        moves = new ArrayList<>();
         if (againstAi == false) {
             if (!isPlayerOneBlack) { //playerOne white
                 playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
@@ -73,7 +71,6 @@ public class Game extends Observable {
      * Reinitializes all data members for a new game
      */
     public void reset() {
-        moves = new ArrayList<>();
         playerOne = new HumanPlayer(playerOne.getName(), playerOne.isBlack());
         playerOneTurn = !playerOne.isBlack();
         playerTwo = new HumanPlayer(playerTwo.getName(), playerTwo.isBlack());
