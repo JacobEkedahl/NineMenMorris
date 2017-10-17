@@ -274,6 +274,12 @@ public class NineMenMorris extends Application {
 
         image.toFront();
         PathTransition transition = new PathTransition();
+
+        String className = gameSession.getCurrentPlayer().getClass().getName();
+        if (className.equals("modell.AI")) {
+            transition.setDelay(Duration.seconds(1));
+        }
+
         transition.setNode(image);
         transition.setDuration(Duration.seconds(1));
         transition.setPath(line);
@@ -522,7 +528,7 @@ public class NineMenMorris extends Application {
                             gameSession.movePiece(Integer.parseInt(gameSession.getSelectedPieceID()), gameSession.getSelectedPosition());
                         }
 
-                        if (gameSession.isMill(gameSession.getSelectedPiece(), gameSession.getGameBoardPieces())) {
+                        if (gameSession.isMill(gameSession.getSelectedPiece())) {
                             gameSession.next();
                             System.out.println("Mill!");
                         } else {
@@ -576,7 +582,7 @@ public class NineMenMorris extends Application {
                         movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
 
                         //do this player have a mill
-                        if (gameSession.isMill(gameSession.getSelectedPiece(), gameSession.getGameBoardPieces())) {
+                        if (gameSession.isMill(gameSession.getSelectedPiece())) {
                             gameSession.next();
                         } else {
                             //has this player won
@@ -631,6 +637,15 @@ public class NineMenMorris extends Application {
             gameSession.AIselectPiece();
             gameSession.AIselectPosition();
             movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
+            //check for win            
+            if (gameSession.isMill(gameSession.getSelectedPiece())) {
+                movePiece(gameSession.AIremovePiece(), "NOPOS"); //send it away on UI
+            }
+
+            if (!gameSession.getPlaceStage() && gameSession.haveCurrentPlayerWon()) {
+                newWinner(gameSession.getCurrentPlayer().getName());
+                //call method gaemWon with playerName as parameter in
+            }
             gameSession.again();
             updateTurnUI();
         }

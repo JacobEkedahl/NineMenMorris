@@ -198,7 +198,7 @@ public class Game extends Observable {
      * @param player
      * @return Selected players pieces that's been placed on the board
      */
-    public ArrayList<Piece> getPlayerPiecesFromBoard(HumanPlayer player) {
+    public ArrayList<Piece> getPlayerPiecesFromBoard(Player player) {
         return gameBoard.getPlayerPieces(player);
     }
 
@@ -305,7 +305,7 @@ public class Game extends Observable {
      * @return true if current player has won
      */
     public boolean haveCurrentPlayerWon() {
-        return gameRules.haveCurrentPlayerWon((HumanPlayer) getOtherPlayer(), gameBoard.getEmptyPos());
+        return gameRules.haveCurrentPlayerWon(getOtherPlayer(), gameBoard.getEmptyPos());
     }
 
     /**
@@ -328,8 +328,9 @@ public class Game extends Observable {
      * @param gameBoardPieces
      * @return true if new mill's formed
      */
-    public boolean isMill(Piece selectedPiece, ArrayList<Piece> gameBoardPieces) {
-        return gameRules.newMill(selectedPiece, gameBoardPieces);
+    public boolean isMill(Piece selectedPiece) {
+        return gameRules.newMill(selectedPiece, gameBoard.getPieces());
+        //us observer instad
     }
 
     /**
@@ -406,24 +407,32 @@ public class Game extends Observable {
     }
 
     public void AIselectPiece() {
-        this.setSelectedPiece(Integer.parseInt(getAI().selectPiece(getPlaceStage(), getPlayerPieces(getAI()))));
+        if (placeStage) {
+            this.setSelectedPiece(Integer.parseInt(getAI().selectPiece(getPlaceStage(), getPlayerPieces(getAI()), gameBoard.getEmptyPos(), getAI())));
+        } else {
+            this.setSelectedPiece(Integer.parseInt(getAI().selectPiece(getPlaceStage(), getPlayerPiecesFromBoard(getAI()), gameBoard.getEmptyPos(), getAI())));
+        }
     }
 
     public void AIselectPosition() {
         this.setSelectedPosition(AIselectPos(getAI()));
         if (this.getPlaceStage()) {
             this.placePiece(Integer.parseInt(this.getSelectedPieceID()), this.getSelectedPosition());
+        } else {
+            this.movePiece(Integer.parseInt(this.getSelectedPieceID()), this.getSelectedPosition());
         }
+
+        // if (gameRules.newMill(selectedPiece))
     }
 
-    
-
-    public String AIremovePiece(AI aiPlayer) {
-        return aiPlayer.removePiece(getOtherPlayer().getPieces());
+    public String AIremovePiece() {
+        String pieceToRemove = getAI().removePiece(getOtherPlayer().getPieces());
+        removePiece(Integer.parseInt(pieceToRemove));
+        return pieceToRemove;
     }
 
     public String AIselectPos(AI aiPlayer) {
-        return aiPlayer.selectPosition(gameBoard.getEmptyPos());
+        return getAI().selectPosition(gameBoard.getEmptyPos());
     }
 
     /**

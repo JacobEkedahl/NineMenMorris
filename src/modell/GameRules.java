@@ -248,7 +248,7 @@ public class GameRules implements Observer {
      * @param freePos
      * @return true if current player has won
      */
-    public boolean haveCurrentPlayerWon(HumanPlayer otherPlayer, ArrayList<Position> freePos) { //need boardPieces update both boardPieces and freePos placeStage
+    public boolean haveCurrentPlayerWon(Player otherPlayer, ArrayList<Position> freePos) { //need boardPieces update both boardPieces and freePos placeStage
         int totalPlayerPieces = 0;
         for (Piece p : boardPieces) {
             if (p.isBlackEqual(otherPlayer.isBlack())) {
@@ -268,11 +268,11 @@ public class GameRules implements Observer {
      * @param freePos
      * @return returns true if otherPlayer can still make a move
      */
-    private boolean haveOtherNoMoves(HumanPlayer otherPlayer, ArrayList<Position> freePos) { //only be called when placeStage is over need to test
+    private boolean haveOtherNoMoves(Player otherPlayer, ArrayList<Position> freePos) { //only be called when placeStage is over need to test
         int noOfChoices = 0;
         ArrayList<Piece> piecesOnBoard = getListPiecesOfColor(otherPlayer.isBlack(), boardPieces);
         for (Piece p : piecesOnBoard) {
-            noOfChoices += getOptionMove(freePos, p,  otherPlayer).size();
+            noOfChoices += getOptionMove(freePos, p, otherPlayer).size();
         }
         return noOfChoices == 0; //if otherPlayer have no options return true
     }
@@ -339,9 +339,9 @@ public class GameRules implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println(boardPieces  + " called with: " + arg);
-        if(!boardPieces .equals(arg)){
-            boardPieces = (ArrayList<Piece>) arg; 
+        System.out.println(boardPieces + " called with: " + arg);
+        if (!boardPieces.equals(arg)) {
+            boardPieces = (ArrayList<Piece>) arg;
         }
     }
 }

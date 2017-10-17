@@ -21,7 +21,7 @@ public class AI extends Player implements Observer {
     private ArrayList<Position> freePos;
     private ArrayList<Piece> boardPieces;
     private String position;
-    private static int counter = 0;
+    private static int counter = -1;
 
     public AI(String name, boolean black) {
         super(name, black);
@@ -37,36 +37,37 @@ public class AI extends Player implements Observer {
     }
 
     public String removePiece(ArrayList<Piece> opponentPieces) {
-        return Integer.toString(opponentPieces.get(0).getId());
+        return Integer.toString(opponentPieces.get((new Random()).nextInt(opponentPieces.size())).getId());
     }
 
-    public String selectPiece(boolean placingStage, ArrayList<Piece> myPiece) {
-        String idNumber = "";
-        ArrayList<String> options;
-        if (placingStage) {
-            counter = counter + 1;
-            return (Integer.toString(myPiece.get(counter).getId()));
+    public String selectPiece(boolean placingStage, ArrayList<Piece> myPiece, ArrayList<Position> freePos, AI aiPlayer) {
+        ArrayList<String> options = new ArrayList<>();
+        System.out.println("selectPiece is called");
+        System.out.println("freePos size: " + freePos.size());
+        System.out.println("my pieces size: " + myPiece.size());
 
+        // System.out.println("trying piece: " + myPiece.get(i).getId());
+        if (!placingStage) {
+            int randPiece = 0;
+            do {
+                randPiece = new Random().nextInt(myPiece.size());
+                options = gameRules.getOptionMove(freePos, myPiece.get(randPiece), aiPlayer);
+            } while (options.size() == 0);
+            System.out.println("This piece has options: " + options.size());
+            position = options.get(0);
+            return Integer.toString(myPiece.get(randPiece).getId());
         } else {
-            for (int i = 0; i < boardPieces.size(); i++) {
-                if (super.isBlack() == boardPieces.get(i).isBlack()) {
-                    options = gameRules.getOptionMove(freePos, boardPieces.get(i), this);
-                    if (options.size() > 0) {
-                        position = options.get(0).toString();
-                        return Integer.toString(boardPieces.get(i).getId());
-                    }
-                }
+            for (Position p : freePos) {
+                options.add(p.name());
             }
+            position = options.get((new Random()).nextInt(options.size()));
+            counter++;
+            return Integer.toString(myPiece.get(counter).getId());
         }
-        //returns id
-        return null;
     }
 
     public String selectPosition(ArrayList<Position> freePos) {
-        Random rand = new Random();
-        int randInt;
-        randInt = rand.nextInt(5);
-        return freePos.get(0).name();
+        return position;
     }
 
     @Override
