@@ -53,7 +53,7 @@ public class AI extends Player {
         } else {
             for (int i = 0; i < boardPieces.size(); i++) {
                 if (super.isBlack() == boardPieces.get(i).isBlack()) {
-                    options = gameRules.getOptionMove(freePos, boardPieces.get(i), boardPieces, this);
+                    options = gameRules.getOptionMove(freePos, boardPieces.get(i), this);
                     if (options.size() > 0) {
                         position = options.get(0).toString();
                         return Integer.toString(boardPieces.get(i).getId());
