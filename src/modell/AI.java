@@ -36,11 +36,6 @@ public class AI extends Player implements Observer {
         super("AI", true);
     }
 
-    @Override
-    public Piece placePiece() {
-        return strat.placePiece();
-    }
-
     public String removePiece(ArrayList<Piece> opponentPieces) {
         return Integer.toString(opponentPieces.get(0).getId());
     }
@@ -71,7 +66,7 @@ public class AI extends Player implements Observer {
         Random rand = new Random();
         int randInt;
         randInt = rand.nextInt(5);
-        return freePos.get(randInt).name();
+        return freePos.get(0).name();
     }
 
     @Override
@@ -90,7 +85,20 @@ public class AI extends Player implements Observer {
 
     @Override
     public Piece placePiece(int pieceId, Position newPos) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Piece pieceForBoard;
+        ArrayList<Piece> pieces = new ArrayList<>();
+        pieces = super.getPieces();
+
+        for (int i = 0; i < pieces.size(); i++) {
+            if (pieces.get(i).isIdEqual(pieceId)) {
+                pieces.get(i).setPos(newPos);
+                pieceForBoard = pieces.get(i);
+                pieces.remove(i);
+                return pieceForBoard;
+            }
+        }
+        System.out.println("Return null piece");
+        return null;
     }
 
     @Override
@@ -99,6 +107,11 @@ public class AI extends Player implements Observer {
         if (!boardPieces.equals(arg)) {
             boardPieces = (ArrayList<Piece>) arg;
         }
+    }
+
+    @Override
+    public Piece placePiece() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

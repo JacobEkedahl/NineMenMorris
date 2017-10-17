@@ -517,7 +517,7 @@ public class NineMenMorris extends Application {
                         if (gameSession.getPlaceStage()) {
                             gameSession.placePiece(Integer.parseInt(gameSession.getSelectedPieceID()), gameSession.getSelectedPosition());
                         } else {
-
+                            //does not run
                             System.out.println("Piece moved to :" + gameSession.getSelectedPosition());
                             gameSession.movePiece(Integer.parseInt(gameSession.getSelectedPieceID()), gameSession.getSelectedPosition());
                         }
@@ -589,7 +589,7 @@ public class NineMenMorris extends Application {
                             if (gameSession.againstAI()) {
                                 aiMoves();
                             }
-                            
+
                         }
                     }
                 }
@@ -628,12 +628,11 @@ public class NineMenMorris extends Application {
         }
 
         public void aiMoves() {
-                gameSession.AIselectPiece();
-                gameSession.AIselectPosition();
-                //gameSession.placePiece(Integer.parseInt(gameSession.getSelectedPieceID()), "A1");
-                movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
-                gameSession.again();
-                updateTurnUI();
+            gameSession.AIselectPiece();
+            gameSession.AIselectPosition();
+            movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
+            gameSession.again();
+            updateTurnUI();
         }
 
         /**

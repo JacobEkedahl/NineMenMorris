@@ -414,7 +414,12 @@ public class Game extends Observable {
 
     public void AIselectPosition() {
         this.setSelectedPosition(AIselectPos(getAI()));
+        if (this.getPlaceStage()) {
+            this.placePiece(Integer.parseInt(this.getSelectedPieceID()), this.getSelectedPosition());
+        }
     }
+
+    
 
     public String AIremovePiece(AI aiPlayer) {
         return aiPlayer.removePiece(getOtherPlayer().getPieces());

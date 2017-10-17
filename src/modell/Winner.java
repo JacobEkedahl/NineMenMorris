@@ -23,7 +23,7 @@ class Winner implements Serializable, Comparable<Winner> {
     }
     
     public void addToHighscore(){
-        winTimes++;
+        winTimes++; 
     }
     
     public String getName(){
