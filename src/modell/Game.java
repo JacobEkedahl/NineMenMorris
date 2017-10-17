@@ -61,7 +61,7 @@ public class Game extends Observable {
         selectedPos = Position.NOPOS;
         gameState = new GameState();
     }
-    
+
     public boolean againstAI() {
         return this.againstAI;
     }
@@ -395,7 +395,7 @@ public class Game extends Observable {
     public void changePlayerTurn() {
         playerOneTurn = !playerOneTurn;
     }
-    
+
     public AI getAI() {
         if (playerOne instanceof AI) {
             return (AI) playerOne;
@@ -408,7 +408,7 @@ public class Game extends Observable {
     public void AIselectPiece() {
         this.setSelectedPiece(Integer.parseInt(getAI().selectPiece(getPlaceStage(), gameBoard.getPieces(), getPlayerPieces(getAI()))));
     }
-    
+
     public void AIselectPosition() {
         this.setSelectedPosition(AIselectPos(getAI()));
     }
@@ -416,7 +416,7 @@ public class Game extends Observable {
     public String AIremovePiece(AI aiPlayer) {
         return aiPlayer.removePiece(getOtherPlayer().getPieces());
     }
-    
+
     public String AIselectPos(AI aiPlayer) {
         return aiPlayer.selectPosition(gameBoard.getEmptyPos());
     }

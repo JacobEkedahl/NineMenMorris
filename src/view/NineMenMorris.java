@@ -647,7 +647,7 @@ public class NineMenMorris extends Application {
             tempPiece = (ImageView) event.getSource();
             unMaskAll();
 
-            if (gameSession.getState() == 0) {
+            if (gameSession.getState() == 0 || gameSession.getState() == 1) {
                 if (gameSession.getCurrentPlayer().isBlack()) {
                     if (Integer.parseInt(tempPiece.getId()) > 8) {
                         gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId())); //modell change
@@ -659,7 +659,9 @@ public class NineMenMorris extends Application {
                 }
                 // SysAItem.out.println(Integer.parseInt(tempPiece.getId()) + " is id");
                 System.out.println(tempPiece.getId() + " Id of imageView");
-                gameSession.next();
+                if (gameSession.getState() == 0) {
+                    gameSession.next();
+                }
             }
 
             if (gameSession.getState() == 2) {
