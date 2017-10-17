@@ -44,9 +44,11 @@ public class Game extends Observable {
             if (!isPlayerOneBlack) { //playerOne white
                 playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
                 playerTwo = new AI(playerTwoName, !isPlayerOneBlack);
+                this.addObserver((AI) playerTwo);
             } else {
                 playerOne = new AI(playerTwoName, isPlayerOneBlack);
                 playerTwo = new HumanPlayer(playerOneName, !isPlayerOneBlack);
+                this.addObserver((AI) playerOne);
             }
         }
 
@@ -60,6 +62,7 @@ public class Game extends Observable {
         selectedPiece = new Piece();
         selectedPos = Position.NOPOS;
         gameState = new GameState();
+        this.addObserver(gameRules);
     }
 
     public boolean againstAI() {
@@ -406,7 +409,7 @@ public class Game extends Observable {
     }
 
     public void AIselectPiece() {
-        this.setSelectedPiece(Integer.parseInt(getAI().selectPiece(getPlaceStage(), gameBoard.getPieces(), getPlayerPieces(getAI()))));
+        this.setSelectedPiece(Integer.parseInt(getAI().selectPiece(getPlaceStage(), getPlayerPieces(getAI()))));
     }
 
     public void AIselectPosition() {

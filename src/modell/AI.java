@@ -6,13 +6,15 @@
 package modell;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Random;
 
 /**
  *
  * @author Jacob
  */
-public class AI extends Player {
+public class AI extends Player implements Observer {
 
     Strategy strat;
     GameRules gameRules;
@@ -43,7 +45,7 @@ public class AI extends Player {
         return Integer.toString(opponentPieces.get(0).getId());
     }
 
-    public String selectPiece(boolean placingStage, ArrayList<Piece> boardPieces, ArrayList<Piece> myPiece) {
+    public String selectPiece(boolean placingStage, ArrayList<Piece> myPiece) {
         String idNumber = "";
         ArrayList<String> options;
         if (placingStage) {
@@ -89,6 +91,14 @@ public class AI extends Player {
     @Override
     public Piece placePiece(int pieceId, Position newPos) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        System.out.println(boardPieces + " called with: " + arg);
+        if (!boardPieces.equals(arg)) {
+            boardPieces = (ArrayList<Piece>) arg;
+        }
     }
 
 }
