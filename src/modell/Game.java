@@ -30,6 +30,19 @@ public class Game extends Observable {
 
     public Game(boolean isPlayerOneBlack, String playerOneName, String playerTwoName, boolean againstAi) {
         againstAI = againstAi;
+
+        counter = 18;
+        playerOneTurn = !isPlayerOneBlack; //Player with white start
+        gameBoard = new GameBoard();
+        placeStage = true;
+        gameRunning = true;
+        gameRules = new GameRules();
+
+        selectedPiece = new Piece();
+        selectedPos = Position.NOPOS;
+        gameState = new GameState();
+        this.addObserver(gameRules);
+        
         if (againstAi == false) {
             if (!isPlayerOneBlack) { //playerOne white
                 playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
@@ -48,19 +61,10 @@ public class Game extends Observable {
                 playerTwo = new HumanPlayer(playerOneName, !isPlayerOneBlack);
                 this.addObserver((AI) playerOne);
             }
+            AI tmp = (AI) playerTwo;
+            tmp.connectRules(gameRules);
+            playerTwo = (AI) tmp;
         }
-
-        counter = 18;
-        playerOneTurn = !isPlayerOneBlack; //Player with white start
-        gameBoard = new GameBoard();
-        placeStage = true;
-        gameRunning = true;
-        gameRules = new GameRules();
-
-        selectedPiece = new Piece();
-        selectedPos = Position.NOPOS;
-        gameState = new GameState();
-        this.addObserver(gameRules);
     }
 
     public boolean againstAI() {
@@ -329,7 +333,7 @@ public class Game extends Observable {
      * @return true if new mill's formed
      */
     public boolean isMill(Piece selectedPiece) {
-        return gameRules.newMill(selectedPiece, gameBoard.getPieces());
+        return gameRules.newMill(selectedPiece);
         //us observer instad
     }
 
@@ -426,7 +430,7 @@ public class Game extends Observable {
     }
 
     public String AIremovePiece() {
-        String pieceToRemove = getAI().removePiece(getOtherPlayer().getPieces());
+        String pieceToRemove = getAI().removePiece(getOtherPlayerPieces());
         removePiece(Integer.parseInt(pieceToRemove));
         return pieceToRemove;
     }

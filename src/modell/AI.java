@@ -33,7 +33,11 @@ public class AI extends Player implements Observer {
     }
 
     public AI() {
-        super("AI", true);
+        this("AI", true);
+    }
+
+    public void connectRules(GameRules rules) {
+        this.gameRules = rules;
     }
 
     public String removePiece(ArrayList<Piece> opponentPieces) {
@@ -45,6 +49,7 @@ public class AI extends Player implements Observer {
         System.out.println("selectPiece is called");
         System.out.println("freePos size: " + freePos.size());
         System.out.println("my pieces size: " + myPiece.size());
+        Piece tempP = new Piece();
 
         // System.out.println("trying piece: " + myPiece.get(i).getId());
         if (!placingStage) {
@@ -53,13 +58,25 @@ public class AI extends Player implements Observer {
                 randPiece = new Random().nextInt(myPiece.size());
                 options = gameRules.getOptionMove(freePos, myPiece.get(randPiece), aiPlayer);
             } while (options.size() == 0);
-            System.out.println("This piece has options: " + options.size());
+            //System.out.println("This piece has options: " + options.size());
             position = options.get(0);
             return Integer.toString(myPiece.get(randPiece).getId());
         } else {
+            tempP = myPiece.get(counter + 1);
             for (Position p : freePos) {
+                tempP.setPos(p);
+                // System.out.println("tempPos: " + tempP.getPos().name() + " " + gameRules.getNoPiece());
+                if (gameRules.newMill(tempP)) {
+                    System.out.println("there is a mill to be had");
+                    position = p.name();
+                    counter++;
+                    return Integer.toString(myPiece.get(counter).getId());
+
+                }
+
                 options.add(p.name());
             }
+
             position = options.get((new Random()).nextInt(options.size()));
             counter++;
             return Integer.toString(myPiece.get(counter).getId());
@@ -103,7 +120,6 @@ public class AI extends Player implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println(boardPieces + " called with: " + arg);
         if (!boardPieces.equals(arg)) {
             boardPieces = (ArrayList<Piece>) arg;
         }

@@ -33,6 +33,10 @@ public class GameRules implements Observer {
         connectedPos = initAdjPos();
         millCombinations = initMilPos();
     }
+    
+    public int getNoPiece() {
+        return boardPieces.size();
+    }
 
     private String[] initMilPos() {
         String millString[] = {
@@ -92,7 +96,7 @@ public class GameRules implements Observer {
             "#A4", "A1", "A7", "B4",
             "#A7", "A4", "D7",
             "#B2", "B4", "D2",
-            "#B4", "B2", "B6",
+            "#B4", "B2", "B6", "A4", "C4",
             "#B6", "B4", "D6",
             "#C3", "C4", "D3",
             "#C4", "B4", "C5", "C3",
@@ -255,7 +259,6 @@ public class GameRules implements Observer {
                 totalPlayerPieces++;
             }
         }
-        System.out.println(totalPlayerPieces);
 
         return totalPlayerPieces < 3 || haveOtherNoMoves(otherPlayer, freePos);
     }
@@ -309,8 +312,7 @@ public class GameRules implements Observer {
      * @param gameBoardUpdate updated version of gameBoard
      * @return true if a new mill has been formed
      */
-    public boolean newMill(Piece movedPiece, ArrayList<Piece> gameBoardUpdate) {
-        boardPieces = gameBoardUpdate;
+    public boolean newMill(Piece movedPiece) {
         String piecePos = posToString(movedPiece.getPos());
         boolean pieceBlack = movedPiece.isBlack();
         ArrayList<String> millPos = new ArrayList<>();
@@ -339,7 +341,7 @@ public class GameRules implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println(boardPieces + " called with: " + arg);
+       // System.out.println(boardPieces + " called with: " + arg);
         if (!boardPieces.equals(arg)) {
             boardPieces = (ArrayList<Piece>) arg;
         }

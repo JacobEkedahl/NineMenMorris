@@ -250,17 +250,18 @@ public class NineMenMorris extends Application {
         // System.out.println("dx: " + dx + " - dy:" + dy);
         // System.out.println("x: " + x + " y: " + y);
         Line line;
-        if (pos.equals("NOPOS")) {
+        if (pos.equals("NOPOS")) { //remove piece
             Random rand = new Random();
             int xValue = 800 * (rand.nextInt(4) + 1);
             int yValue = 700 * (rand.nextInt(5) + 1);
             if (gameSession.getPlaceStage()) {
-                x -= x;
-                y -= y;
+                ImageView positionImg = getPositionByID(gameSession.getSelectedPiece().getPos().name());
+                double newX = positionImg.getLayoutX() - 680 - x;
+                double newY = positionImg.getLayoutY() + 105 - y;
             } else {
                 //ImageView tempView = getPieceByID(pieceId);
-                x = image.getX();
-                y = image.getY();
+                x = image.getX() - 680 - x;
+                y = image.getY() + 105 - y;
             }
             line = new Line(x + 25, y + 25, xValue, yValue);
         } else {
@@ -278,6 +279,11 @@ public class NineMenMorris extends Application {
         String className = gameSession.getCurrentPlayer().getClass().getName();
         if (className.equals("modell.AI")) {
             transition.setDelay(Duration.seconds(1));
+            if (controller.getAIremove()) {
+                transition.setDelay(Duration.seconds(3));
+                System.out.println("delay is called");
+                controller.AIremovePiece = false;
+            }
         }
 
         transition.setNode(image);
@@ -397,6 +403,7 @@ public class NineMenMorris extends Application {
 
         private Game sharedGame;
         private HighScore highScore;
+        private boolean AIremovePiece;
 
         /**
          * *
@@ -408,6 +415,7 @@ public class NineMenMorris extends Application {
         Controller(Game game) {
             sharedGame = game;
             highScore = new HighScore();
+            AIremovePiece = false;
         }
 
         /**
@@ -416,6 +424,10 @@ public class NineMenMorris extends Application {
          * other similair names and add same players score together Top 10
          * String is generated
          */
+        public boolean getAIremove() {
+            return AIremovePiece;
+        }
+
         public void showHighscore() {
             String highscore = "";
 
@@ -513,7 +525,6 @@ public class NineMenMorris extends Application {
          */
         private void positionStage(Event event) {
             ImageView selectPos = (ImageView) event.getSource();
-            System.out.println(selectPos);
             hovarablePositions = gameSession.getFreePos();
             if (gameSession.getState() == 1) {
                 for (int i = 0; i < hovarablePositions.size(); i++) {
@@ -559,20 +570,12 @@ public class NineMenMorris extends Application {
             MaskAll();
             ImageView selectPos = (ImageView) event.getSource();
 
-            System.out.println(selectPos.getId());
-            System.out.println(gameSession.getState() + " is the state");
-            System.out.println(gameSession.getSelectedPieceID() + " is piece id");
-            System.out.println();
-
-            System.out.println(gameSession.getSelectedPosition() + " is piece pos");
-
             if (gameSession.getState() == 1) {
                 hovarablePositions = gameSession.getOption(gameSession.getSelectedPiece());
                 for (String s : hovarablePositions) {
                     System.out.print(s + " - ");
                 }
 
-                System.out.println("\n\n\n\n");
                 for (int i = 0; i < hovarablePositions.size(); i++) {
                     if (convertIDtoString(selectPos.getId()).equals(hovarablePositions.get(i))) {
                         System.out.println(selectPos.getId() + " is the id of pos"); //and is a possible move
@@ -639,6 +642,7 @@ public class NineMenMorris extends Application {
             movePiece(gameSession.getSelectedPieceID(), gameSession.getSelectedPosition());
             //check for win            
             if (gameSession.isMill(gameSession.getSelectedPiece())) {
+                AIremovePiece = true;
                 movePiece(gameSession.AIremovePiece(), "NOPOS"); //send it away on UI
             }
 
@@ -755,11 +759,6 @@ public class NineMenMorris extends Application {
                     if (gameSession.againstAI()) {
                         aiMoves();
                     }
-
-                    for (String s : hovarablePositions) {
-                        System.out.println(s);
-                    }
-
                 }
             }
         }
