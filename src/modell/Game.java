@@ -42,7 +42,7 @@ public class Game extends Observable {
         selectedPos = Position.NOPOS;
         gameState = new GameState();
         this.addObserver(gameRules);
-        
+
         if (againstAi == false) {
             if (!isPlayerOneBlack) { //playerOne white
                 playerOne = new HumanPlayer(playerOneName, isPlayerOneBlack);
@@ -274,10 +274,18 @@ public class Game extends Observable {
      *
      * @param idNumber
      */
-    public void removePiece(int idNumber) {
-        gameBoard.removePiece(idNumber);
-        setChanged();
-        notifyObservers(gameBoard.getPieces());
+    public boolean removePiece(int idNumber) {
+        ArrayList<Piece> otherPieces = getOtherPlayerPieces();
+        for (Piece p : otherPieces) {
+            if (p.isIdEqual(idNumber)) {
+                //remove piece
+                gameBoard.removePiece(idNumber);
+                setChanged();
+                notifyObservers(gameBoard.getPieces());
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isPieceOnBoard(int idNumber) {

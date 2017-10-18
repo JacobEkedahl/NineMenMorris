@@ -690,23 +690,23 @@ public class NineMenMorris extends Application {
                 } else {
                     gameSession.setSelectedPiece(Integer.parseInt(tempPiece.getId()));
                 }
-                if (gameSession.isPieceOnBoard(Integer.parseInt(tempPiece.getId()))) {
+                if (gameSession.removePiece(Integer.parseInt(tempPiece.getId()))) {  //remove from Modell
                     movePiece(tempPiece.getId(), "NOPOS"); //send it away on UI
-                    gameSession.removePiece(Integer.parseInt(tempPiece.getId())); //remove from Modell
-                    //Look if thisplayer has one
-                    if (gameSession.haveCurrentPlayerWon()) {
-                        newWinner(gameSession.getCurrentPlayer().getName());
-                        //call method gaemWon with playerName as parameter in
-                    }
+                }
+                //Look if thisplayer has one
+                if (gameSession.haveCurrentPlayerWon()) {
+                    newWinner(gameSession.getCurrentPlayer().getName());
+                    //call method gaemWon with playerName as parameter in
+                }
 
-                    gameSession.again();
-                    updateTurnUI();
-                    if (gameSession.againstAI()) {
-                        aiMoves();
-                    }
-                    MaskAll();
+                gameSession.again();
+                updateTurnUI();
+                MaskAll();
+                if (gameSession.againstAI()) {
+                    aiMoves();
                 }
             }
+
         }
 
         /**
@@ -747,14 +747,14 @@ public class NineMenMorris extends Application {
                 System.out.println(tempPiece.getId());
                 if (gameSession.isPieceOnBoard(Integer.parseInt(tempPiece.getId()))) {
                     //positionReset(gameSession.positionFromPiece(Integer.parseInt(tempPiece.getId())));
-                    movePiece(tempPiece.getId(), "NOPOS");
-                    gameSession.removePiece(Integer.parseInt(tempPiece.getId())); //needs to check if this piece is on gameBoard
+                    if (gameSession.removePiece(Integer.parseInt(tempPiece.getId()))) {  //remove from Modell
+                        movePiece(tempPiece.getId(), "NOPOS"); //send it away on UI
+                        unMask();
+                        gameSession.again();
+                        updateTurnUI();
+                    }
                     //remove piece
                     //check if player has won
-
-                    unMask();
-                    gameSession.again();
-                    updateTurnUI();
 
                     if (gameSession.againstAI()) {
                         aiMoves();
