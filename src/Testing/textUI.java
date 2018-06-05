@@ -71,7 +71,7 @@ public class textUI {
         System.out.println("Player placed piece: " + selectedId + "At pos: " + chosenPos);
 
         Piece p = new Piece(isPieceBlack(selectedId), stringToPos(chosenPos), selectedId);
-        if (game.isMill(p, game.getGameBoardPieces())) {
+        if (game.isMill(p)) {
             System.out.println("You have a mill, choose one of these pieces to remove:");
             ArrayList<Piece> otherPlayPieces = game.getOtherPlayerPieces();
             for (Piece otherPiece : otherPlayPieces) {
@@ -140,7 +140,7 @@ public class textUI {
         System.out.println("Player placed piece: " + selectedId + "At pos: " + chosenPos);
 
         Piece p = new Piece(isPieceBlack(selectedId), stringToPos(chosenPos), selectedId);
-        if (game.isMill(p, game.getGameBoardPieces())) {
+        if (game.isMill(p)) {
             System.out.println("You have a mill, choose one of these pieces to remove:");
             ArrayList<Piece> otherPlayPieces = game.getOtherPlayerPieces();
             for (Piece otherPiece : otherPlayPieces) {

@@ -51,7 +51,7 @@ public class GameRulesTest {
         gameBoard.addPiece(pieceForMill2);
         gameBoard.addPiece(selectedPiece);
 
-        if (gameRules.newMill(selectedPiece, gameBoard.getPieces())) {
+        if (gameRules.newMill(selectedPiece)) {
             System.out.println("A new mill!");
         } else {
             System.out.println("No mill!");
